@@ -64,7 +64,7 @@ code{word-break:break-all;font-size:12px;display:block;background:var(--bg);padd
 <script>
 const SET={farm:['Farmácia clínica',120],lab:['Análises clínicas',80],man:['Farmácia de manipulação',150],est:['Estética farmacêutica',200]};
 const DED={farm:1,lab:1,man:0,est:0};
-const TABS=[['home','Início'],['pront','Prontuário'],['agenda','Agenda'],['pag','Pagamentos'],['ir','Extrato IR']];
+const TABS=[['home','Início'],['pront','Prontuário'],['agenda','Agenda'],['prof','Profissionais'],['pag','Pagamentos'],['ir','Extrato IR']];
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const brl=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const dt=d=>d.split('-').reverse().join('/');
@@ -73,12 +73,12 @@ const addD=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
 const uid=()=>Math.random().toString(36).slice(2,9);
 let S,ui={tab:'home',cal:addD(0).slice(0,7),day:addD(0),filt:'',editing:null,pix:null,newPac:false};
 function seed(){return{
- cfg:{chave:'',nome:'Farma & Vida',cidade:'Camocim'},sel:'p1',
+ cfg:{chave:'',nome:'Farma & Vida',cidade:'Camocim'},sel:'p1',prof:[{id:'f1',nome:'Dra. Helena (Farmacêutica)',setor:'',reg:'CRF 0000'},{id:'f2',nome:'Dr. Carlos (Biomédico)',setor:'lab',reg:'CRBM 0000'},{id:'f3',nome:'Dra. Renata',setor:'est',reg:'CRF 0001'}],
  pacientes:[{id:'p1',nome:'Maria das Graças Lima',cpf:'123.456.789-00',nasc:'1968-04-12'},{id:'p2',nome:'João Pedro Alves',cpf:'987.654.321-00',nasc:'1991-09-30'}],
  pront:[
   {id:uid(),pid:'p1',setor:'farm',data:addD(-40),prof:'Dra. Helena (Farmacêutica)',texto:'Revisão de medicamentos: losartana 50 mg e metformina 850 mg. Orientada sobre horários e adesão. Retorno em 60 dias.'},
   {id:uid(),pid:'p1',setor:'lab',data:addD(-20),prof:'Dr. Carlos (Biomédico)',texto:'Hemograma, glicemia em jejum (112 mg/dL) e HbA1c (6,4%). Laudos entregues.'},
-  {id:uid(),pid:'p1',setor:'man',data:addD(-10),prof:'Dra. Helena',texto:'Manipulado: vitamina D 7.000 UI, 30 cápsulas. Lote 0925-14.'},
+  {id:uid(),pid:'p1',setor:'man',data:addD(-10),prof:'Dra. Helena (Farmacêutica)',texto:'Manipulado: vitamina D 7.000 UI, 30 cápsulas. Lote 0925-14.'},
   {id:uid(),pid:'p2',setor:'est',data:addD(-15),prof:'Dra. Renata',texto:'Peeling químico superficial. Sem intercorrências. Fotoproteção reforçada.'}],
  cons:[
   {id:uid(),pid:'p1',setor:'farm',data:addD(-40),hora:'09:00',valor:120,obs:'',status:'realizada',pago:true,pagoEm:addD(-40)},
@@ -86,7 +86,7 @@ function seed(){return{
   {id:uid(),pid:'p1',setor:'farm',data:addD(5),hora:'10:00',valor:120,obs:'Trazer caixas dos remédios',status:'agendada',pago:false},
   {id:uid(),pid:'p2',setor:'est',data:addD(7),hora:'15:30',valor:200,obs:'',status:'agendada',pago:false}]}}
 try{S=JSON.parse(localStorage.getItem('clinica')||'null')}catch(e){}
-S=S||seed();if(S.cfg&&S.cfg.nome=='Clinica Integrada')S.cfg.nome='Farma & Vida';
+S=S||seed();S.prof=S.prof||[];if(S.cfg&&S.cfg.nome=='Clinica Integrada')S.cfg.nome='Farma & Vida';
 const save=()=>{if(DB){pushDB();return}try{localStorage.setItem('clinica',JSON.stringify(S))}catch(e){}};
 const pac=id=>S.pacientes.find(p=>p.id==id)||{nome:'—'};
 const tag=s=>`<span class="tag ${s}">${SET[s][0]}</span>`;
@@ -102,9 +102,12 @@ function head(){
  $('#pac').innerHTML=S.pacientes.map(p=>`<option value="${p.id}" ${p.id==S.sel?'selected':''}>${esc(p.nome)}</option>`).join('');
  $('#nav').innerHTML=TABS.map(([k,n])=>`<button class="tab ${ui.tab==k?'on':''}" data-act="tab" data-v="${k}">${n}</button>`).join('');
 }
-function render(){if(!S.pacientes.find(p=>p.id==S.sel)&&S.pacientes[0])S.sel=S.pacientes[0].id;head();({home:vHome,pront:vPront,agenda:vAgenda,pag:vPag,ir:vIR})[ui.tab]();modal();save();
+function render(){if(!S.pacientes.find(p=>p.id==S.sel)&&S.pacientes[0])S.sel=S.pacientes[0].id;head();({home:vHome,pront:vPront,agenda:vAgenda,prof:vProf,pag:vPag,ir:vIR})[ui.tab]();modal();save();
  if(ui.focus){const el=$('#c-'+ui.focus);if(el)el.scrollIntoView({block:'center'});ui.focus=null}
  if(ui.sd){const el=$('#dialist');if(el)el.scrollIntoView({block:'nearest',behavior:'smooth'});ui.sd=0}}
+const delBtn=(key,k,id,msg='Excluir mesmo?',lb='Excluir')=>ui.ask==key?`<span class="pend">${msg}</span><button class="pri" data-act="del" data-k="${k}" data-id="${id}">Sim, excluir</button><button data-act="ask" data-v="">Não</button>`:`<button data-act="ask" data-v="${key}">${lb}</button>`;
+const profOpts=(st)=>{const l=S.prof.filter(p=>!st||!p.setor||p.setor==st);return`<option value="">${l.length?'Selecione…':'Cadastre na aba Profissionais'}</option>`+l.map(p=>`<option>${esc(p.nome)}</option>`).join('')};
+function rm(k,id){S[k]=S[k].filter(x=>x.id!=id);delete sync[k+id];if(DB)DB.collection(k).doc(id).delete().catch(()=>toast('Não foi possível excluir no banco compartilhado. Peça permissão de Contribuidor.'))}
 const isOpen=c=>c.status=='agendada'||c.status=='confirmada';
 const MES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 function vHome(){
@@ -118,9 +121,14 @@ function vHome(){
  $('#app').innerHTML=`<div class="stats"><div class="card"><b>${by(t).length}</b>consultas hoje</div><div class="card"><b>${prox.length}</b>nos próximos 7 dias</div><div class="card"><b>${brl(pend.reduce((s,c)=>s+c.valor,0))}</b>a receber (${pend.length})</div></div>
  <div class="card"><div class="row" style="margin-bottom:10px"><button data-act="mm" data-v="-1" aria-label="Mês anterior">‹</button><h3 class="sp" style="text-align:center">${MES[m-1]} de ${y}</h3><button data-act="mm" data-v="1" aria-label="Próximo mês">›</button></div><div class="cal">${cells}</div>
  <div class="row mut" style="margin-top:8px">${Object.entries(SET).map(([k,[nm]])=>`<span class="tag ${k}">${nm}</span>`).join('')}</div></div>
- <div class="card" id="dialist"><h3 style="margin-bottom:6px">Consultas de ${dt(ui.day)}</h3>${dia.length?dia.map(c=>`<div class="entry ${c.setor}"><div class="row"><b>${c.hora}</b>${tag(c.setor)}<span>${esc(pac(c.pid).nome)}</span><span class="mut">· ${c.status}</span>${c.pago?'<span class="ok">Pago</span>':'<span class="pend">A pagar</span>'}<span class="sp"></span><button class="pri" data-act="goto" data-id="${c.id}">Abrir na agenda</button>${c.status=='agendada'?`<button data-act="confirm" data-id="${c.id}">Confirmar</button>`:''}${isOpen(c)?`<button data-act="gorem" data-id="${c.id}">Remarcar</button><button data-act="gocan" data-id="${c.id}">Cancelar</button>`:''}</div>${c.obs?`<div class="mut">Obs.: ${esc(c.obs)}</div>`:''}</div>`).join(''):'<p class="mut">Nenhuma consulta neste dia. Clique em outro dia ou marque uma nova na Agenda.</p>'}</div>`;
+ <div class="card" id="dialist"><h3 style="margin-bottom:6px">Consultas de ${dt(ui.day)}</h3>${dia.length?dia.map(c=>`<div class="entry ${c.setor}"><div class="row"><b>${c.hora}</b>${tag(c.setor)}<span>${esc(pac(c.pid).nome)}</span><span class="mut">· ${c.status}</span>${c.prof?`<span class="mut">· ${esc(c.prof)}</span>`:''}${c.pago?'<span class="ok">Pago</span>':'<span class="pend">A pagar</span>'}<span class="sp"></span><button class="pri" data-act="goto" data-id="${c.id}">Abrir na agenda</button>${c.status=='agendada'?`<button data-act="confirm" data-id="${c.id}">Confirmar</button>`:''}${isOpen(c)?`<button data-act="gorem" data-id="${c.id}">Remarcar</button><button data-act="gocan" data-id="${c.id}">Cancelar</button>`:''}</div>${c.obs?`<div class="mut">Obs.: ${esc(c.obs)}</div>`:''}</div>`).join(''):'<p class="mut">Nenhuma consulta neste dia. Clique em outro dia ou marque uma nova na Agenda.</p>'}</div>`;
 }
 function toast(t){const el=$('#toast');el.textContent=t;el.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>el.style.display='none',7000)}
+function vProf(){
+ $('#app').innerHTML=`<form id="fprof" class="card"><h3 style="margin-bottom:10px">Cadastrar profissional</h3><div class="grid"><label>Nome<input name="nome" required placeholder="Ex.: Dra. Ana Lima"></label><label>Setor<select name="setor"><option value="">Todos os setores</option>${setorOpts('')}</select></label><label>Registro (CRF/CRM/CRBM)<input name="reg"></label></div><button class="pri">Cadastrar</button></form>
+ <div class="card"><h3 style="margin-bottom:6px">Profissionais (${S.prof.length})</h3>${S.prof.length?S.prof.map(q=>`<div class="entry ${q.setor||''}"><div class="row"><b>${esc(q.nome)}</b>${q.setor?tag(q.setor):'<span class="mut">Todos os setores</span>'}${q.reg?`<span class="mut">${esc(q.reg)}</span>`:''}<span class="sp"></span>${delBtn('f'+q.id,'prof',q.id,'Excluir profissional? Registros antigos mantêm o nome.')}</div></div>`).join(''):'<p class="mut">Nenhum profissional cadastrado ainda.</p>'}</div>
+ <div class="card"><h3>Zerar simulação</h3><p class="mut">Apaga todos os pacientes, profissionais, prontuários e consultas, para todos os usuários. Os dados de PIX e do recibo são mantidos.</p>
+ ${ui.zero?`<form id="fzero" class="row"><input name="conf" placeholder="Digite ZERAR" style="max-width:200px" autocomplete="off"><button class="pri">Apagar tudo</button><button type="button" data-act="zero">Cancelar</button></form><div class="pend" id="zmsg"></div>`:'<button data-act="zero">Zerar todos os dados</button>'}</div>`}
 function recNo(c){if(!c.recNo)c.recNo=Math.max(0,...S.cons.map(x=>x.recNo||0))+1;return String(c.recNo).padStart(5,'0')}
 function recText(c){const p=pac(c.pid);return`RECIBO Nº ${recNo(c)}\n${S.cfg.nome}${S.cfg.doc?' – '+S.cfg.doc:''}\nRecebemos de ${p.nome}${p.cpf?' (CPF '+p.cpf+')':''} a quantia de ${brl(c.valor)}, referente a ${SET[c.setor][0]} (${dt(c.data)}), paga via PIX em ${dt(c.pagoEm)}.\n${S.cfg.cidade}, ${dt(c.pagoEm)}.`}
 function modal(){const mo=$('#modal'),c=ui.rec&&S.cons.find(x=>x.id==ui.rec);document.body.classList.toggle('mo',!!c);
@@ -132,16 +140,20 @@ function modal(){const mo=$('#modal'),c=ui.rec&&S.cons.find(x=>x.id==ui.rec);doc
  <div class="row noprint"><button class="pri" data-act="print">Imprimir / salvar PDF</button><button data-act="copyrec">Copiar recibo</button><button data-act="closerec">Fechar</button></div></div></div>`}
 
 function vPront(){
+ if(!S.pacientes.length){$('#app').innerHTML=`<div class="card"><h3>Nenhum paciente cadastrado</h3><form id="fpac" class="grid" style="margin-top:12px"><label>Nome<input name="nome" required></label><label>CPF<input name="cpf" placeholder="000.000.000-00"></label><label>Nascimento<input type="date" name="nasc"></label><div><button class="pri">Cadastrar paciente</button></div></form></div>`;return}
+ const cl=S.cons.filter(c=>c.pid==S.sel).sort((a,b)=>b.data.localeCompare(a.data));
  const p=pac(S.sel),list=S.pront.filter(e=>e.pid==S.sel&&(!ui.filt||e.setor==ui.filt)).sort((a,b)=>b.data.localeCompare(a.data));
  $('#app').innerHTML=`
  <div class="card"><div class="row"><div class="sp"><h2>${esc(p.nome)}</h2><div class="mut">CPF ${esc(p.cpf||'—')} · Nascimento ${p.nasc?dt(p.nasc):'—'}</div></div>
- <button data-act="editp">${ui.editP?'Fechar edição':'Editar dados'}</button><button data-act="newpac">${ui.newPac?'Fechar':'Novo paciente'}</button></div>
+ <button data-act="editp">${ui.editP?'Fechar edição':'Editar dados'}</button><button data-act="newpac">${ui.newPac?'Fechar':'Novo paciente'}</button>${delBtn('p'+S.sel,'pacientes',S.sel,'Excluir paciente, prontuário e consultas dele?','Excluir paciente')}</div>
  ${ui.newPac?`<form id="fpac" class="grid" style="margin-top:12px"><label>Nome<input name="nome" required></label><label>CPF<input name="cpf" placeholder="000.000.000-00"></label><label>Nascimento<input type="date" name="nasc"></label><div><button class="pri">Cadastrar paciente</button></div></form>`:''}
  ${ui.editP?`<form id="fpedit" class="grid" style="margin-top:12px"><label>Nome<input name="nome" value="${esc(p.nome)}" required></label><label>CPF<input name="cpf" value="${esc(p.cpf)}"></label><label>Nascimento<input type="date" name="nasc" value="${p.nasc||''}"></label><div><button class="pri">Salvar alterações</button></div></form>`:''}</div>
+ <div class="card"><div class="row"><h3 class="sp">Consultas do paciente</h3><button class="pri" data-act="tab" data-v="agenda">Marcar consulta</button></div>
+ ${cl.length?cl.map(c=>`<div class="entry ${c.setor}"><div class="row"><b>${dt(c.data)} ${c.hora}</b>${tag(c.setor)}${c.prof?`<span class="mut">${esc(c.prof)}</span>`:''}<span class="${c.status=='agendada'?'pend':c.status=='cancelada'?'mut':'ok'}">${c.status}</span>${c.pago?'<span class="ok">Pago</span>':'<span class="pend">A pagar</span>'}<span class="sp"></span><button data-act="goto" data-id="${c.id}">Abrir na agenda</button></div></div>`).join(''):'<p class="mut">Nenhuma consulta para este paciente.</p>'}</div>
  <div class="card"><h3>Prontuário geral</h3>
  <div class="row" style="margin:10px 0"><button class="tab ${!ui.filt?'on':''}" data-act="filt" data-v="">Todos os setores</button>${Object.entries(SET).map(([k,[n]])=>`<button class="tab ${ui.filt==k?'on':''}" data-act="filt" data-v="${k}">${n}</button>`).join('')}</div>
- ${list.length?list.map(e=>`<div class="entry ${e.setor}"><div class="row">${tag(e.setor)}<b>${dt(e.data)}</b><span class="mut">${esc(e.prof)}</span><span class="sp"></span><button data-act="edite" data-id="${e.id}">${ui.editE==e.id?'Fechar':'Editar'}</button></div><div>${esc(e.texto)}</div>${e.edit?`<div class="mut">Editado em ${dt(e.edit)}</div>`:''}${ui.editE==e.id?`<form class="fedit" data-id="${e.id}" style="margin-top:8px"><div class="grid"><label>Setor<select name="setor">${setorOpts(e.setor)}</select></label><label>Data<input type="date" name="data" value="${e.data}" required></label><label>Profissional<input name="prof" value="${esc(e.prof)}" required></label></div><label>Evolução<textarea name="texto" rows="3" required>${esc(e.texto)}</textarea></label><button class="pri">Salvar alterações</button></form>`:''}</div>`).join(''):'<p class="mut">Nenhum registro neste filtro. Adicione o primeiro abaixo.</p>'}</div>
- <form id="freg" class="card"><h3 style="margin-bottom:10px">Novo registro</h3><div class="grid"><label>Setor<select name="setor">${setorOpts(ui.filt||'farm')}</select></label><label>Data<input type="date" name="data" value="${addD(0)}" required></label><label>Profissional<input name="prof" required></label></div><label>Evolução / observações<textarea name="texto" rows="3" required></textarea></label><button class="pri">Salvar no prontuário</button></form>`;
+ ${list.length?list.map(e=>`<div class="entry ${e.setor}"><div class="row">${tag(e.setor)}<b>${dt(e.data)}</b><span class="mut">${esc(e.prof)}</span><span class="sp"></span><button data-act="edite" data-id="${e.id}">${ui.editE==e.id?'Fechar':'Editar'}</button></div><div>${esc(e.texto)}</div>${e.edit?`<div class="mut">Editado em ${dt(e.edit)}</div>`:''}${ui.editE==e.id?`<form class="fedit" data-id="${e.id}" style="margin-top:8px"><div class="grid"><label>Setor<select name="setor">${setorOpts(e.setor)}</select></label><label>Data<input type="date" name="data" value="${e.data}" required></label><label>Profissional<input name="prof" list="dl${e.id}" value="${esc(e.prof)}" required><datalist id="dl${e.id}">${S.prof.map(q=>`<option value="${esc(q.nome)}">`).join('')}</datalist></label></div><label>Evolução<textarea name="texto" rows="3" required>${esc(e.texto)}</textarea></label><button class="pri">Salvar alterações</button></form>`:''}</div>`).join(''):'<p class="mut">Nenhum registro neste filtro. Adicione o primeiro abaixo.</p>'}</div>
+ <form id="freg" class="card"><h3 style="margin-bottom:10px">Novo registro</h3><div class="grid"><label>Setor<select name="setor">${setorOpts(ui.filt||'farm')}</select></label><label>Data<input type="date" name="data" value="${addD(0)}" required></label><label>Profissional<select name="prof" required>${profOpts('')}</select></label></div><label>Evolução / observações<textarea name="texto" rows="3" required></textarea></label><button class="pri">Salvar no prontuário</button></form>`;
 }
 
 function vAgenda(){
@@ -150,18 +162,19 @@ function vAgenda(){
  <form id="fag" class="card"><h3 style="margin-bottom:10px">Marcar consulta</h3><div class="grid">
  <label>Paciente<select name="pid">${S.pacientes.map(p=>`<option value="${p.id}" ${p.id==S.sel?'selected':''}>${esc(p.nome)}</option>`).join('')}</select></label>
  <label>Setor<select name="setor" id="ssetor">${setorOpts('farm')}</select></label>
+ <label>Profissional<select name="prof" id="sprof" required>${profOpts('farm')}</select></label>
  <label>Data<input type="date" name="data" min="${addD(0)}" required></label>
  <label>Horário<input type="time" name="hora" required></label>
  <label>Valor (R$)<input type="number" step="0.01" min="0" name="valor" id="sval" value="${SET.farm[1]}"></label></div>
  <label>Observação<input name="obs" placeholder="Ex.: jejum de 12h, trazer exames anteriores"></label>
  <div id="msg" class="pend"></div><button class="pri">Marcar consulta</button></form>
  <div class="card"><h3 style="margin-bottom:6px">Consultas</h3>${l.length?l.map(c=>{const ed=ui.editing==c.id;return`
- <div class="entry ${c.setor}${ui.focus==c.id?' foc':''}" id="c-${c.id}"><div class="row">${tag(c.setor)}<b>${dt(c.data)} às ${c.hora}</b><span>${esc(pac(c.pid).nome)}</span><span class="sp"></span>
+ <div class="entry ${c.setor}${ui.focus==c.id?' foc':''}" id="c-${c.id}"><div class="row">${tag(c.setor)}<b>${dt(c.data)} às ${c.hora}</b><span>${esc(pac(c.pid).nome)}</span>${c.prof?`<span class="mut">· ${esc(c.prof)}</span>`:''}<span class="sp"></span>
  <span class="${c.status=='agendada'?'pend':c.status=='cancelada'?'mut':'ok'}">${c.status[0].toUpperCase()+c.status.slice(1)}</span></div>
  ${c.obs?`<div class="mut">Obs.: ${esc(c.obs)}</div>`:''}
  ${isOpen(c)?`<div class="row" style="margin-top:6px">${c.status=='agendada'?`<button class="pri" data-act="confirm" data-id="${c.id}">Confirmar consulta</button>`:''}<button data-act="resched" data-id="${c.id}">${ed?'Fechar':'Remarcar'}</button><button data-act="done" data-id="${c.id}">Marcar como realizada</button><button data-act="cancel" data-id="${c.id}">Cancelar consulta</button></div>`:c.status=='cancelada'?`<div class="row" style="margin-top:6px"><button data-act="react" data-id="${c.id}">Reativar consulta</button></div>`:''}
  ${ui.cancel==c.id?`<form class="fcan grid" data-id="${c.id}" style="margin-top:8px"><label>Motivo do cancelamento (opcional)<input name="motivo"></label><div><button class="pri">Confirmar cancelamento</button></div></form>`:''}
- ${ed?`<form class="frem grid" data-id="${c.id}" style="margin-top:8px"><label>Nova data<input type="date" name="data" min="${addD(0)}" value="${c.data}" required></label><label>Novo horário<input type="time" name="hora" value="${c.hora}" required></label><label>Motivo (opcional)<input name="motivo"></label><div><button class="pri">Confirmar remarcação</button></div></form><div class="pend" id="rmsg"></div>`:''}</div>`}).join(''):'<p class="mut">Nenhuma consulta marcada.</p>'}</div>`;
+ ${ed?`<form class="frem grid" data-id="${c.id}" style="margin-top:8px"><label>Nova data<input type="date" name="data" min="${addD(0)}" value="${c.data}" required></label><label>Novo horário<input type="time" name="hora" value="${c.hora}" required></label><label>Motivo (opcional)<input name="motivo"></label><div><button class="pri">Confirmar remarcação</button></div></form><div class="pend" id="rmsg"></div>`:''}<div class="row" style="margin-top:6px">${delBtn('c'+c.id,'cons',c.id,'Excluir esta consulta?')}</div></div>`}).join(''):'<p class="mut">Nenhuma consulta marcada.</p>'}</div>`;
 }
 
 function vPag(){
@@ -210,6 +223,9 @@ document.addEventListener('click',e=>{
  const b=e.target.closest('[data-act]');if(!b){const c=e.target.closest('.cell');if(c){ui.day=c.dataset.d;ui.sd=1;render()}return}const a=b.dataset.act,id=b.dataset.id;
  if(a=='tab'){ui.tab=b.dataset.v;ui.editing=null}
  else if(a=='filt')ui.filt=b.dataset.v;
+ else if(a=='ask')ui.ask=b.dataset.v;
+ else if(a=='zero')ui.zero=!ui.zero;
+ else if(a=='del'){const k=b.dataset.k;if(k=='pacientes'){S.pront.filter(x=>x.pid==id).forEach(x=>rm('pront',x.id));S.cons.filter(x=>x.pid==id).forEach(x=>rm('cons',x.id))}rm(k,id);ui.ask='';if(k=='pacientes'&&S.sel==id)S.sel=''}
  else if(a=='newpac')ui.newPac=!ui.newPac;
  else if(a=='editp')ui.editP=!ui.editP;
  else if(a=='edite')ui.editE=ui.editE==id?null:id;
@@ -236,7 +252,7 @@ document.addEventListener('click',e=>{
 document.addEventListener('change',e=>{
  if(e.target.id=='pac'){S.sel=e.target.value;render()}
  if(e.target.id=='ano'){ui.ano=e.target.value;render()}
- if(e.target.id=='ssetor')$('#sval').value=SET[e.target.value][1];
+ if(e.target.id=='ssetor'){$('#sval').value=SET[e.target.value][1];$('#sprof').innerHTML=profOpts(e.target.value)}
 });
 document.addEventListener('submit',e=>{
  e.preventDefault();const f=e.target,d=Object.fromEntries(new FormData(f));
@@ -244,11 +260,13 @@ document.addEventListener('submit',e=>{
  else if(f.id=='fpedit'){Object.assign(pac(S.sel),d);ui.editP=false}
  else if(f.classList.contains('fedit')){Object.assign(S.pront.find(x=>x.id==f.dataset.id),d,{edit:addD(0)});ui.editE=null}
  else if(f.classList.contains('fcan')){const c=S.cons.find(x=>x.id==f.dataset.id);c.status='cancelada';c.obs=(c.obs?c.obs+' | ':'')+`Cancelada em ${dt(addD(0))}`+(d.motivo?` (${d.motivo})`:'');ui.cancel=null}
+ else if(f.id=='fprof'){S.prof.push({id:uid(),nome:d.nome,setor:d.setor,reg:d.reg})}
+ else if(f.id=='fzero'){if((d.conf||'').trim().toUpperCase()!='ZERAR'){$('#zmsg').textContent='Digite ZERAR para confirmar.';return}KEYS.forEach(k=>S[k].slice().forEach(x=>rm(k,x.id)));S.sel='';ui.zero=false}
  else if(f.id=='freg'){S.pront.push({id:uid(),pid:S.sel,...d})}
  else if(f.id=='fcfg'){S.cfg={chave:d.chave,nome:d.nome||'Clinica',cidade:d.cidade||'Cidade',doc:d.doc||''}}
  else if(f.id=='fag'){
   if(S.cons.some(c=>isOpen(c)&&c.setor==d.setor&&c.data==d.data&&c.hora==d.hora)){$('#msg').textContent='Esse horário já está ocupado neste setor. Escolha outro.';return}
-  S.cons.push({id:uid(),pid:d.pid,setor:d.setor,data:d.data,hora:d.hora,valor:+d.valor||0,obs:d.obs,status:'agendada',pago:false})}
+  S.cons.push({id:uid(),pid:d.pid,prof:d.prof,setor:d.setor,data:d.data,hora:d.hora,valor:+d.valor||0,obs:d.obs,status:'agendada',pago:false})}
  else if(f.classList.contains('frem')){
   const c=S.cons.find(x=>x.id==f.dataset.id);
   if(S.cons.some(o=>o.id!=c.id&&isOpen(o)&&o.setor==c.setor&&o.data==d.data&&o.hora==d.hora)){$('#rmsg').textContent='Esse horário já está ocupado neste setor.';return}
@@ -256,7 +274,7 @@ document.addEventListener('submit',e=>{
  render();
 });
 // Banco compartilhado (quando disponível)
-let DB=null,pr=0;const sync={},KEYS=['pacientes','pront','cons'],busy=()=>/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||'');
+let DB=null,pr=0;const sync={},KEYS=['pacientes','pront','cons','prof'],busy=()=>/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||'');
 function pushDB(){if(!DB)return;
  for(const k of KEYS)for(const it of S[k]){const j=JSON.stringify(it);if(sync[k+it.id]!==j){sync[k+it.id]=j;DB.collection(k).doc(it.id).set(it).catch(()=>{if(!pushDB.w){pushDB.w=1;toast('Não foi possível salvar no banco compartilhado. Peça ao professor permissão de Contribuidor.')}})}}
  const cj=JSON.stringify(S.cfg);if(sync.cfg!==cj){sync.cfg=cj;DB.doc('config/clinica').set(S.cfg).catch(()=>{})}}
@@ -264,7 +282,7 @@ function remote(){if(busy())pr=1;else render()}
 document.addEventListener('focusout',()=>setTimeout(()=>{if(pr&&!busy()){pr=0;render()}},250));
 async function initDB(){
  try{const db=await window.claude?.use('db');if(!db)return;DB=db;
-  S.pacientes=[];S.pront=[];S.cons=[];sync.cfg=JSON.stringify(S.cfg);
+  S.pacientes=[];S.pront=[];S.cons=[];S.prof=[];sync.cfg=JSON.stringify(S.cfg);
   for(const k of KEYS)db.collection(k).onSnapshot(snap=>{const m=new Map(S[k].map(x=>[x.id,x]));
    snap.docChanges().forEach(ch=>{const id=ch.doc.id;if(ch.type=='removed'){m.delete(id);delete sync[k+id]}else{const d={...ch.doc.data()};m.set(id,d);sync[k+id]=JSON.stringify(d)}});
    S[k]=[...m.values()];remote()},()=>{});
