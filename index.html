@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Farma &amp; Vida – Prontuário e Agenda</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;700&family=Fraunces:wght@600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#eef3f1;--card:#fff;--ink:#16302d;--mut:#5d7471;--line:#d5e0dd;--pri:#0f5c55;--priInk:#fff;--soft:#dcebe7;--warn:#a85a00;
+--farm:#1f7a63;--lab:#2f64a0;--man:#7b4d9c;--est:#b24a63}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a18;--card:#162623;--ink:#e4f0ed;--mut:#93aca8;--line:#2a403c;--pri:#4fb8a8;--priInk:#06201c;--soft:#1e3631;--warn:#e0a050;--farm:#4fbf9f;--lab:#6fa3e0;--man:#b98ce0;--est:#e58ba1}}
+:root[data-theme="dark"]{--bg:#0e1a18;--card:#162623;--ink:#e4f0ed;--mut:#93aca8;--line:#2a403c;--pri:#4fb8a8;--priInk:#06201c;--soft:#1e3631;--warn:#e0a050;--farm:#4fbf9f;--lab:#6fa3e0;--man:#b98ce0;--est:#e58ba1}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Figtree,system-ui,sans-serif}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;margin:0;font-weight:600}
+header{background:var(--pri);color:var(--priInk);padding:14px 18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header h1{font-size:20px;flex:1;min-width:160px}
+nav{display:flex;gap:4px;padding:8px 12px;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--line)}
+nav button{white-space:nowrap}
+main{max-width:920px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+button,select,input,textarea{font:inherit;color:var(--ink)}
+button{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:7px 12px;cursor:pointer}
+button.pri{background:var(--pri);color:var(--priInk);border-color:var(--pri)}
+button.tab.on{background:var(--soft);border-color:var(--pri);font-weight:700}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+input,select,textarea{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+label{display:block;font-size:13px;color:var(--mut);margin-bottom:8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0 10px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sp{flex:1}.mut{color:var(--mut);font-size:13px}
+.tag{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12px;font-weight:700;color:#fff}
+.farm{background:var(--farm)}.lab{background:var(--lab)}.man{background:var(--man)}.est{background:var(--est)}
+.tag.farm,.tag.lab,.tag.man,.tag.est{color:var(--bg)}
+.entry{border-left:4px solid var(--line);padding:6px 0 6px 12px;margin:10px 0}
+.entry.farm{border-color:var(--farm);background:none}.entry.lab{border-color:var(--lab);background:none}.entry.man{border-color:var(--man);background:none}.entry.est{border-color:var(--est);background:none}
+.ok{color:var(--farm);font-weight:700}.pend{color:var(--warn);font-weight:700}
+.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:520px}th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left}
+.qr{display:flex;gap:14px;flex-wrap:wrap;align-items:center;background:var(--soft);padding:12px;border-radius:10px;margin-top:10px}
+.qr #qrbox{background:#fff;padding:8px;border-radius:8px}
+code{word-break:break-all;font-size:12px;display:block;background:var(--bg);padding:6px;border-radius:6px;max-width:420px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.wd{text-align:center;font-size:12px;color:var(--mut)}
+.cell{min-height:78px;border:1px solid var(--line);border-radius:8px;padding:3px;background:var(--bg);overflow:hidden}
+.cell.today{border:2px solid var(--pri)}.cell.sel{background:var(--soft)}
+.dn{border:0;background:none;padding:0 4px;font-weight:700;font-size:13px}
+.chip{display:block;width:100%;text-align:left;font-size:11px;padding:1px 4px;margin-top:2px;border-radius:4px;border:0;color:var(--bg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}.stats b{font-size:22px;display:block}
+.foc{box-shadow:0 0 0 2px var(--pri);background:var(--soft)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9;overflow:auto}
+.recbox{background:var(--card);border:2px dashed var(--pri);border-radius:12px;padding:20px;max-width:520px;width:100%}
+@media(max-width:600px){.chip{font-size:0;height:8px;padding:0}.cell{min-height:58px}}
+@media(max-width:600px){input,select,textarea{font-size:16px}button:not(.chip):not(.dn){min-height:40px}.dn{min-height:28px;min-width:28px}main{padding:10px}.card{padding:12px}#pac{min-width:0;width:100%}}
+@media(min-width:1000px){main{max-width:1040px}}
+@media print{header,nav,.noprint{display:none!important}body.mo main{display:none}.ov{position:static;background:none;padding:0}.recbox{border:1px solid #000;color:#000;background:#fff}}
+</style>
+</head>
+<body>
+<header><h1>Farma &amp; Vida</h1><span id="sync" style="font-size:12px;opacity:.9">Simulação acadêmica · dados fictícios</span><div class="row noprint"><span class="mut" style="color:inherit">Paciente</span><select id="pac" style="width:auto;min-width:200px"></select></div></header>
+<nav id="nav"></nav>
+<main id="app"></main>
+<div id="modal"></div><div id="toast" role="status" class="noprint" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:10px;z-index:20"></div>
+<script>
+const SET={farm:['Farmácia clínica',120],lab:['Análises clínicas',80],man:['Farmácia de manipulação',150],est:['Estética farmacêutica',200]};
+const DED={farm:1,lab:1,man:0,est:0};
+const TABS=[['home','Início'],['pront','Prontuário'],['agenda','Agenda'],['pag','Pagamentos'],['ir','Extrato IR']];
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const brl=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const dt=d=>d.split('-').reverse().join('/');
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const addD=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
+const uid=()=>Math.random().toString(36).slice(2,9);
+let S,ui={tab:'home',cal:addD(0).slice(0,7),day:addD(0),filt:'',editing:null,pix:null,newPac:false};
+function seed(){return{
+ cfg:{chave:'',nome:'Farma & Vida',cidade:'Camocim'},sel:'p1',
+ pacientes:[{id:'p1',nome:'Maria das Graças Lima',cpf:'123.456.789-00',nasc:'1968-04-12'},{id:'p2',nome:'João Pedro Alves',cpf:'987.654.321-00',nasc:'1991-09-30'}],
+ pront:[
+  {id:uid(),pid:'p1',setor:'farm',data:addD(-40),prof:'Dra. Helena (Farmacêutica)',texto:'Revisão de medicamentos: losartana 50 mg e metformina 850 mg. Orientada sobre horários e adesão. Retorno em 60 dias.'},
+  {id:uid(),pid:'p1',setor:'lab',data:addD(-20),prof:'Dr. Carlos (Biomédico)',texto:'Hemograma, glicemia em jejum (112 mg/dL) e HbA1c (6,4%). Laudos entregues.'},
+  {id:uid(),pid:'p1',setor:'man',data:addD(-10),prof:'Dra. Helena',texto:'Manipulado: vitamina D 7.000 UI, 30 cápsulas. Lote 0925-14.'},
+  {id:uid(),pid:'p2',setor:'est',data:addD(-15),prof:'Dra. Renata',texto:'Peeling químico superficial. Sem intercorrências. Fotoproteção reforçada.'}],
+ cons:[
+  {id:uid(),pid:'p1',setor:'farm',data:addD(-40),hora:'09:00',valor:120,obs:'',status:'realizada',pago:true,pagoEm:addD(-40)},
+  {id:uid(),pid:'p1',setor:'lab',data:addD(-20),hora:'07:30',valor:80,obs:'Jejum 12h',status:'realizada',pago:true,pagoEm:addD(-20)},
+  {id:uid(),pid:'p1',setor:'farm',data:addD(5),hora:'10:00',valor:120,obs:'Trazer caixas dos remédios',status:'agendada',pago:false},
+  {id:uid(),pid:'p2',setor:'est',data:addD(7),hora:'15:30',valor:200,obs:'',status:'agendada',pago:false}]}}
+try{S=JSON.parse(localStorage.getItem('clinica')||'null')}catch(e){}
+S=S||seed();if(S.cfg&&S.cfg.nome=='Clinica Integrada')S.cfg.nome='Farma & Vida';
+const save=()=>{if(DB){pushDB();return}try{localStorage.setItem('clinica',JSON.stringify(S))}catch(e){}};
+const pac=id=>S.pacientes.find(p=>p.id==id)||{nome:'—'};
+const tag=s=>`<span class="tag ${s}">${SET[s][0]}</span>`;
+const setorOpts=(v)=>Object.entries(SET).map(([k,[n]])=>`<option value="${k}" ${k==v?'selected':''}>${n}</option>`).join('');
+
+// PIX (BR Code estático)
+const f=(i,v)=>i+String(v.length).padStart(2,'0')+v;
+function crc(s){let c=0xFFFF;for(let i=0;i<s.length;i++){c^=s.charCodeAt(i)<<8;for(let j=0;j<8;j++)c=c&0x8000?((c<<1)^0x1021)&0xFFFF:(c<<1)&0xFFFF}return c.toString(16).toUpperCase().padStart(4,'0')}
+const strip=s=>s.replace(/&/g,'e').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9 ]/g,'');
+function pixCode(key,nome,cidade,val,tx){const p=f('00','01')+f('26',f('00','br.gov.bcb.pix')+f('01',key))+f('52','0000')+f('53','986')+f('54',val.toFixed(2))+f('58','BR')+f('59',strip(nome).slice(0,25))+f('60',strip(cidade).slice(0,15))+f('62',f('05',tx))+'6304';return p+crc(p)}
+
+function head(){
+ $('#pac').innerHTML=S.pacientes.map(p=>`<option value="${p.id}" ${p.id==S.sel?'selected':''}>${esc(p.nome)}</option>`).join('');
+ $('#nav').innerHTML=TABS.map(([k,n])=>`<button class="tab ${ui.tab==k?'on':''}" data-act="tab" data-v="${k}">${n}</button>`).join('');
+}
+function render(){if(!S.pacientes.find(p=>p.id==S.sel)&&S.pacientes[0])S.sel=S.pacientes[0].id;head();({home:vHome,pront:vPront,agenda:vAgenda,pag:vPag,ir:vIR})[ui.tab]();modal();save();
+ if(ui.focus){const el=$('#c-'+ui.focus);if(el)el.scrollIntoView({block:'center'});ui.focus=null}
+ if(ui.sd){const el=$('#dialist');if(el)el.scrollIntoView({block:'nearest',behavior:'smooth'});ui.sd=0}}
+const isOpen=c=>c.status=='agendada'||c.status=='confirmada';
+const MES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+function vHome(){
+ const[y,m]=ui.cal.split('-').map(Number),first=new Date(y,m-1,1),n=new Date(y,m,0).getDate(),t=addD(0);
+ const live=S.cons.filter(c=>c.status!='cancelada'),by=d=>live.filter(c=>c.data==d).sort((a,b)=>a.hora.localeCompare(b.hora));
+ let cells=['dom','seg','ter','qua','qui','sex','sáb'].map(d=>`<div class="wd">${d}</div>`).join('');
+ for(let i=0;i<first.getDay();i++)cells+='<div></div>';
+ for(let d=1;d<=n;d++){const ds=`${ui.cal}-${String(d).padStart(2,'0')}`,l=by(ds);
+  cells+=`<div class="cell${ds==t?' today':''}${ds==ui.day?' sel':''}" data-d="${ds}"><button class="dn" data-act="day" data-v="${ds}" aria-label="Dia ${d}">${d}</button>${l.slice(0,2).map(c=>`<button class="chip ${c.setor}" data-act="day" data-v="${ds}" title="${esc(pac(c.pid).nome)} – ${SET[c.setor][0]}">${c.hora} ${esc(pac(c.pid).nome.split(' ')[0])}</button>`).join('')}${l.length>2?`<button class="dn mut" data-act="day" data-v="${ds}">+${l.length-2}</button>`:''}</div>`}
+ const dia=by(ui.day),pend=live.filter(c=>!c.pago),prox=live.filter(c=>isOpen(c)&&c.data>=t&&c.data<=addD(7));
+ $('#app').innerHTML=`<div class="stats"><div class="card"><b>${by(t).length}</b>consultas hoje</div><div class="card"><b>${prox.length}</b>nos próximos 7 dias</div><div class="card"><b>${brl(pend.reduce((s,c)=>s+c.valor,0))}</b>a receber (${pend.length})</div></div>
+ <div class="card"><div class="row" style="margin-bottom:10px"><button data-act="mm" data-v="-1" aria-label="Mês anterior">‹</button><h3 class="sp" style="text-align:center">${MES[m-1]} de ${y}</h3><button data-act="mm" data-v="1" aria-label="Próximo mês">›</button></div><div class="cal">${cells}</div>
+ <div class="row mut" style="margin-top:8px">${Object.entries(SET).map(([k,[nm]])=>`<span class="tag ${k}">${nm}</span>`).join('')}</div></div>
+ <div class="card" id="dialist"><h3 style="margin-bottom:6px">Consultas de ${dt(ui.day)}</h3>${dia.length?dia.map(c=>`<div class="entry ${c.setor}"><div class="row"><b>${c.hora}</b>${tag(c.setor)}<span>${esc(pac(c.pid).nome)}</span><span class="mut">· ${c.status}</span>${c.pago?'<span class="ok">Pago</span>':'<span class="pend">A pagar</span>'}<span class="sp"></span><button class="pri" data-act="goto" data-id="${c.id}">Abrir na agenda</button>${c.status=='agendada'?`<button data-act="confirm" data-id="${c.id}">Confirmar</button>`:''}${isOpen(c)?`<button data-act="gorem" data-id="${c.id}">Remarcar</button><button data-act="gocan" data-id="${c.id}">Cancelar</button>`:''}</div>${c.obs?`<div class="mut">Obs.: ${esc(c.obs)}</div>`:''}</div>`).join(''):'<p class="mut">Nenhuma consulta neste dia. Clique em outro dia ou marque uma nova na Agenda.</p>'}</div>`;
+}
+function toast(t){const el=$('#toast');el.textContent=t;el.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>el.style.display='none',7000)}
+function recNo(c){if(!c.recNo)c.recNo=Math.max(0,...S.cons.map(x=>x.recNo||0))+1;return String(c.recNo).padStart(5,'0')}
+function recText(c){const p=pac(c.pid);return`RECIBO Nº ${recNo(c)}\n${S.cfg.nome}${S.cfg.doc?' – '+S.cfg.doc:''}\nRecebemos de ${p.nome}${p.cpf?' (CPF '+p.cpf+')':''} a quantia de ${brl(c.valor)}, referente a ${SET[c.setor][0]} (${dt(c.data)}), paga via PIX em ${dt(c.pagoEm)}.\n${S.cfg.cidade}, ${dt(c.pagoEm)}.`}
+function modal(){const mo=$('#modal'),c=ui.rec&&S.cons.find(x=>x.id==ui.rec);document.body.classList.toggle('mo',!!c);
+ if(!c){mo.innerHTML='';return}const p=pac(c.pid);
+ mo.innerHTML=`<div class="ov"><div class="recbox" role="dialog" aria-label="Recibo"><div class="row"><h2 class="sp">Recibo nº ${recNo(c)}</h2><span class="ok">Pagamento confirmado</span></div>
+ <p style="font-size:24px;margin:10px 0"><b>${brl(c.valor)}</b></p>
+ <p>Recebemos de <b>${esc(p.nome)}</b>${p.cpf?`, CPF ${esc(p.cpf)}`:''}, a quantia de <b>${brl(c.valor)}</b>, referente a <b>${SET[c.setor][0]}</b> (${dt(c.data)} às ${c.hora}), paga via PIX em ${dt(c.pagoEm)}.</p>
+ <p class="mut">${esc(S.cfg.nome)}${S.cfg.doc?` · ${esc(S.cfg.doc)}`:''}<br>${esc(S.cfg.cidade)}, ${dt(c.pagoEm)}</p>
+ <div class="row noprint"><button class="pri" data-act="print">Imprimir / salvar PDF</button><button data-act="copyrec">Copiar recibo</button><button data-act="closerec">Fechar</button></div></div></div>`}
+
+function vPront(){
+ const p=pac(S.sel),list=S.pront.filter(e=>e.pid==S.sel&&(!ui.filt||e.setor==ui.filt)).sort((a,b)=>b.data.localeCompare(a.data));
+ $('#app').innerHTML=`
+ <div class="card"><div class="row"><div class="sp"><h2>${esc(p.nome)}</h2><div class="mut">CPF ${esc(p.cpf||'—')} · Nascimento ${p.nasc?dt(p.nasc):'—'}</div></div>
+ <button data-act="editp">${ui.editP?'Fechar edição':'Editar dados'}</button><button data-act="newpac">${ui.newPac?'Fechar':'Novo paciente'}</button></div>
+ ${ui.newPac?`<form id="fpac" class="grid" style="margin-top:12px"><label>Nome<input name="nome" required></label><label>CPF<input name="cpf" placeholder="000.000.000-00"></label><label>Nascimento<input type="date" name="nasc"></label><div><button class="pri">Cadastrar paciente</button></div></form>`:''}
+ ${ui.editP?`<form id="fpedit" class="grid" style="margin-top:12px"><label>Nome<input name="nome" value="${esc(p.nome)}" required></label><label>CPF<input name="cpf" value="${esc(p.cpf)}"></label><label>Nascimento<input type="date" name="nasc" value="${p.nasc||''}"></label><div><button class="pri">Salvar alterações</button></div></form>`:''}</div>
+ <div class="card"><h3>Prontuário geral</h3>
+ <div class="row" style="margin:10px 0"><button class="tab ${!ui.filt?'on':''}" data-act="filt" data-v="">Todos os setores</button>${Object.entries(SET).map(([k,[n]])=>`<button class="tab ${ui.filt==k?'on':''}" data-act="filt" data-v="${k}">${n}</button>`).join('')}</div>
+ ${list.length?list.map(e=>`<div class="entry ${e.setor}"><div class="row">${tag(e.setor)}<b>${dt(e.data)}</b><span class="mut">${esc(e.prof)}</span><span class="sp"></span><button data-act="edite" data-id="${e.id}">${ui.editE==e.id?'Fechar':'Editar'}</button></div><div>${esc(e.texto)}</div>${e.edit?`<div class="mut">Editado em ${dt(e.edit)}</div>`:''}${ui.editE==e.id?`<form class="fedit" data-id="${e.id}" style="margin-top:8px"><div class="grid"><label>Setor<select name="setor">${setorOpts(e.setor)}</select></label><label>Data<input type="date" name="data" value="${e.data}" required></label><label>Profissional<input name="prof" value="${esc(e.prof)}" required></label></div><label>Evolução<textarea name="texto" rows="3" required>${esc(e.texto)}</textarea></label><button class="pri">Salvar alterações</button></form>`:''}</div>`).join(''):'<p class="mut">Nenhum registro neste filtro. Adicione o primeiro abaixo.</p>'}</div>
+ <form id="freg" class="card"><h3 style="margin-bottom:10px">Novo registro</h3><div class="grid"><label>Setor<select name="setor">${setorOpts(ui.filt||'farm')}</select></label><label>Data<input type="date" name="data" value="${addD(0)}" required></label><label>Profissional<input name="prof" required></label></div><label>Evolução / observações<textarea name="texto" rows="3" required></textarea></label><button class="pri">Salvar no prontuário</button></form>`;
+}
+
+function vAgenda(){
+ const l=[...S.cons].sort((a,b)=>(a.data+a.hora).localeCompare(b.data+b.hora));
+ $('#app').innerHTML=`
+ <form id="fag" class="card"><h3 style="margin-bottom:10px">Marcar consulta</h3><div class="grid">
+ <label>Paciente<select name="pid">${S.pacientes.map(p=>`<option value="${p.id}" ${p.id==S.sel?'selected':''}>${esc(p.nome)}</option>`).join('')}</select></label>
+ <label>Setor<select name="setor" id="ssetor">${setorOpts('farm')}</select></label>
+ <label>Data<input type="date" name="data" min="${addD(0)}" required></label>
+ <label>Horário<input type="time" name="hora" required></label>
+ <label>Valor (R$)<input type="number" step="0.01" min="0" name="valor" id="sval" value="${SET.farm[1]}"></label></div>
+ <label>Observação<input name="obs" placeholder="Ex.: jejum de 12h, trazer exames anteriores"></label>
+ <div id="msg" class="pend"></div><button class="pri">Marcar consulta</button></form>
+ <div class="card"><h3 style="margin-bottom:6px">Consultas</h3>${l.length?l.map(c=>{const ed=ui.editing==c.id;return`
+ <div class="entry ${c.setor}${ui.focus==c.id?' foc':''}" id="c-${c.id}"><div class="row">${tag(c.setor)}<b>${dt(c.data)} às ${c.hora}</b><span>${esc(pac(c.pid).nome)}</span><span class="sp"></span>
+ <span class="${c.status=='agendada'?'pend':c.status=='cancelada'?'mut':'ok'}">${c.status[0].toUpperCase()+c.status.slice(1)}</span></div>
+ ${c.obs?`<div class="mut">Obs.: ${esc(c.obs)}</div>`:''}
+ ${isOpen(c)?`<div class="row" style="margin-top:6px">${c.status=='agendada'?`<button class="pri" data-act="confirm" data-id="${c.id}">Confirmar consulta</button>`:''}<button data-act="resched" data-id="${c.id}">${ed?'Fechar':'Remarcar'}</button><button data-act="done" data-id="${c.id}">Marcar como realizada</button><button data-act="cancel" data-id="${c.id}">Cancelar consulta</button></div>`:c.status=='cancelada'?`<div class="row" style="margin-top:6px"><button data-act="react" data-id="${c.id}">Reativar consulta</button></div>`:''}
+ ${ui.cancel==c.id?`<form class="fcan grid" data-id="${c.id}" style="margin-top:8px"><label>Motivo do cancelamento (opcional)<input name="motivo"></label><div><button class="pri">Confirmar cancelamento</button></div></form>`:''}
+ ${ed?`<form class="frem grid" data-id="${c.id}" style="margin-top:8px"><label>Nova data<input type="date" name="data" min="${addD(0)}" value="${c.data}" required></label><label>Novo horário<input type="time" name="hora" value="${c.hora}" required></label><label>Motivo (opcional)<input name="motivo"></label><div><button class="pri">Confirmar remarcação</button></div></form><div class="pend" id="rmsg"></div>`:''}</div>`}).join(''):'<p class="mut">Nenhuma consulta marcada.</p>'}</div>`;
+}
+
+function vPag(){
+ const l=S.cons.filter(c=>c.status!='cancelada').sort((a,b)=>b.data.localeCompare(a.data));
+ const k=S.cfg;
+ $('#app').innerHTML=`
+ <div class="card"><h3>Dados de recebimento PIX</h3><p class="mut">Informe a chave PIX da clínica. O QR Code é gerado no padrão do Banco Central e o dinheiro cai direto na sua conta.</p>
+ <form id="fcfg" class="grid"><label>Chave PIX (CPF/CNPJ, e-mail, celular ou aleatória)<input name="chave" value="${esc(k.chave)}"></label><label>Nome do recebedor<input name="nome" value="${esc(k.nome)}"></label><label>Cidade<input name="cidade" value="${esc(k.cidade)}"></label><label>CNPJ/CPF da clínica (no recibo)<input name="doc" value="${esc(k.doc||'')}"></label><div><button class="pri">Salvar dados</button></div></form></div>
+ <div class="card"><h3 style="margin-bottom:6px">Cobranças</h3><div class="scroll"><table><tr><th>Data</th><th>Paciente</th><th>Setor</th><th>Valor</th><th>Situação</th><th></th></tr>
+ ${l.map(c=>`<tr><td>${dt(c.data)}</td><td>${esc(pac(c.pid).nome)}</td><td>${SET[c.setor][0]}</td><td>${brl(c.valor)}</td>
+ <td>${c.pago?`<span class="ok">Pago em ${dt(c.pagoEm)}</span>`:'<span class="pend">Pendente</span>'}</td>
+ <td>${c.pago?`<button data-act="rec" data-id="${c.id}">Ver recibo</button>`:`<button class="pri" data-act="pix" data-id="${c.id}">Pagar com PIX</button>`}</td></tr>`).join('')}</table></div>
+ <div id="pixbox"></div></div>`;
+ if(ui.pix)showPix(ui.pix);
+}
+function showPix(id){
+ ui.pix=id;const c=S.cons.find(x=>x.id==id),box=$('#pixbox');if(!c||!box)return;
+ if(!S.cfg.chave.trim()){box.innerHTML='<div class="qr"><b class="pend">Cadastre a chave PIX da clínica acima para gerar o QR Code.</b></div>';return}
+ const code=pixCode(S.cfg.chave.trim(),S.cfg.nome,S.cfg.cidade,c.valor,'CLI'+c.id.replace(/[^A-Za-z0-9]/g,'').slice(0,20));
+ box.innerHTML=`<div class="qr"><div id="qrbox"></div><div><b>${brl(c.valor)}</b> · ${esc(pac(c.pid).nome)}<br><span class="mut">${SET[c.setor][0]} – ${dt(c.data)}</span>
+ <code id="code">${code}</code><div class="row" style="margin-top:8px"><button data-act="copy" data-v="${code}">Copiar PIX copia e cola</button><button class="pri" data-act="paid" data-id="${c.id}">Confirmar pagamento recebido</button></div></div></div>`;
+ try{new QRCode($('#qrbox'),{text:code,width:150,height:150,correctLevel:QRCode.CorrectLevel.M})}catch(e){$('#qrbox').textContent='Use o código copia e cola.'}
+}
+
+function vIR(){
+ const yrs=[...new Set(S.cons.filter(c=>c.pago).map(c=>c.pagoEm.slice(0,4)).concat([String(new Date().getFullYear())]))].sort().reverse();
+ ui.ano=ui.ano||yrs[0];
+ const l=S.cons.filter(c=>c.pid==S.sel&&c.pago&&c.pagoEm.startsWith(ui.ano)).sort((a,b)=>a.pagoEm.localeCompare(b.pagoEm));
+ const tot=l.reduce((s,c)=>s+c.valor,0),ded=l.filter(c=>DED[c.setor]).reduce((s,c)=>s+c.valor,0),p=pac(S.sel);
+ $('#app').innerHTML=`<div class="card"><div class="row noprint"><h3 class="sp">Extrato para Imposto de Renda</h3><label style="margin:0">Ano<select id="ano" style="width:auto">${yrs.map(y=>`<option ${y==ui.ano?'selected':''}>${y}</option>`).join('')}</select></label></div>
+ <p><b>${esc(p.nome)}</b> · CPF ${esc(p.cpf||'—')}<br><span class="mut">Prestador: ${esc(S.cfg.nome)} · Pagamentos confirmados em ${ui.ano}</span></p>
+ <div class="scroll"><table><tr><th>Pago em</th><th>Serviço</th><th>Valor</th><th>Dedutível*</th></tr>
+ ${l.map(c=>`<tr><td>${dt(c.pagoEm)}</td><td>${SET[c.setor][0]} (${dt(c.data)})</td><td>${brl(c.valor)}</td><td>${DED[c.setor]?'Sim':'Não'}</td></tr>`).join('')||'<tr><td colspan="4" class="mut">Nenhum pagamento confirmado neste ano.</td></tr>'}
+ </table></div>
+ <p><b>Total pago: ${brl(tot)}</b><br><b>Total potencialmente dedutível: ${brl(ded)}</b></p>
+ <p class="mut">*Classificação sugerida: serviços de análises e farmácia clínica prestados por profissional de saúde costumam entrar em despesas médicas; manipulados (produtos) e estética geralmente não. Confirme com seu contador. Para declarar, o recibo precisa ter nome, CPF/CNPJ do prestador e dados do paciente.</p>
+ <div class="row noprint"><button class="pri" data-act="copyir">Copiar extrato</button><button data-act="print">Imprimir / salvar PDF</button></div></div>`;
+}
+function irText(){
+ const p=pac(S.sel),l=S.cons.filter(c=>c.pid==S.sel&&c.pago&&c.pagoEm.startsWith(ui.ano));
+ return`EXTRATO ${ui.ano} – ${S.cfg.nome}\nPaciente: ${p.nome} (CPF ${p.cpf||'—'})\n`+l.map(c=>`${dt(c.pagoEm)} | ${SET[c.setor][0]} | ${brl(c.valor)} | dedutível: ${DED[c.setor]?'sim':'não'}`).join('\n')+`\nTOTAL: ${brl(l.reduce((s,c)=>s+c.valor,0))}`;
+}
+async function copy(t,btn){try{await navigator.clipboard.writeText(t);btn.textContent='Copiado!'}catch(e){const r=document.createRange(),el=btn.parentNode.previousElementSibling;btn.textContent='Selecione o texto e copie'}}
+
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-act]');if(!b){const c=e.target.closest('.cell');if(c){ui.day=c.dataset.d;ui.sd=1;render()}return}const a=b.dataset.act,id=b.dataset.id;
+ if(a=='tab'){ui.tab=b.dataset.v;ui.editing=null}
+ else if(a=='filt')ui.filt=b.dataset.v;
+ else if(a=='newpac')ui.newPac=!ui.newPac;
+ else if(a=='editp')ui.editP=!ui.editP;
+ else if(a=='edite')ui.editE=ui.editE==id?null:id;
+ else if(a=='resched')ui.editing=ui.editing==id?null:id;
+ else if(a=='done')S.cons.find(c=>c.id==id).status='realizada';
+ else if(a=='cancel')ui.cancel=ui.cancel==id?null:id;
+ else if(a=='confirm')S.cons.find(c=>c.id==id).status='confirmada';
+ else if(a=='gocan'){ui.tab='agenda';ui.focus=id;ui.cancel=id}
+ else if(a=='react'){const c=S.cons.find(x=>x.id==id);if(S.cons.some(o=>o.id!=id&&isOpen(o)&&o.setor==c.setor&&o.data==c.data&&o.hora==c.hora)){toast('Esse horário já foi ocupado por outra consulta.');return}c.status='agendada'}
+ else if(a=='pix'){ui.pix=id;render();$('#pixbox').scrollIntoView({block:'nearest'});return}
+ else if(a=='paid'){const c=S.cons.find(x=>x.id==id);c.pago=true;c.pagoEm=addD(0);ui.pix=null;ui.rec=id}
+ else if(a=='rec')ui.rec=id;
+ else if(a=='closerec')ui.rec=null;
+ else if(a=='copyrec'){copy(recText(S.cons.find(c=>c.id==ui.rec)),b);return}
+ else if(a=='day'){ui.day=b.dataset.v;ui.sd=1}
+ else if(a=='gorem'){ui.tab='agenda';ui.focus=id;ui.editing=id}
+ else if(a=='goto'){ui.tab='agenda';ui.focus=id;ui.editing=null}
+ else if(a=='mm'){const[y,m]=ui.cal.split('-').map(Number);ui.cal=iso(new Date(y,m-1+ +b.dataset.v,1)).slice(0,7)}
+ else if(a=='copy'){copy(b.dataset.v,b);return}
+ else if(a=='copyir'){copy(irText(),b);return}
+ else if(a=='print'){try{window.print()}catch(x){}toast('Se a janela de impressão não abriu, abra o app em uma aba própria do navegador ou use "Copiar".');return}
+ render();
+});
+document.addEventListener('change',e=>{
+ if(e.target.id=='pac'){S.sel=e.target.value;render()}
+ if(e.target.id=='ano'){ui.ano=e.target.value;render()}
+ if(e.target.id=='ssetor')$('#sval').value=SET[e.target.value][1];
+});
+document.addEventListener('submit',e=>{
+ e.preventDefault();const f=e.target,d=Object.fromEntries(new FormData(f));
+ if(f.id=='fpac'){const p={id:uid(),nome:d.nome,cpf:d.cpf,nasc:d.nasc};S.pacientes.push(p);S.sel=p.id;ui.newPac=false}
+ else if(f.id=='fpedit'){Object.assign(pac(S.sel),d);ui.editP=false}
+ else if(f.classList.contains('fedit')){Object.assign(S.pront.find(x=>x.id==f.dataset.id),d,{edit:addD(0)});ui.editE=null}
+ else if(f.classList.contains('fcan')){const c=S.cons.find(x=>x.id==f.dataset.id);c.status='cancelada';c.obs=(c.obs?c.obs+' | ':'')+`Cancelada em ${dt(addD(0))}`+(d.motivo?` (${d.motivo})`:'');ui.cancel=null}
+ else if(f.id=='freg'){S.pront.push({id:uid(),pid:S.sel,...d})}
+ else if(f.id=='fcfg'){S.cfg={chave:d.chave,nome:d.nome||'Clinica',cidade:d.cidade||'Cidade',doc:d.doc||''}}
+ else if(f.id=='fag'){
+  if(S.cons.some(c=>isOpen(c)&&c.setor==d.setor&&c.data==d.data&&c.hora==d.hora)){$('#msg').textContent='Esse horário já está ocupado neste setor. Escolha outro.';return}
+  S.cons.push({id:uid(),pid:d.pid,setor:d.setor,data:d.data,hora:d.hora,valor:+d.valor||0,obs:d.obs,status:'agendada',pago:false})}
+ else if(f.classList.contains('frem')){
+  const c=S.cons.find(x=>x.id==f.dataset.id);
+  if(S.cons.some(o=>o.id!=c.id&&isOpen(o)&&o.setor==c.setor&&o.data==d.data&&o.hora==d.hora)){$('#rmsg').textContent='Esse horário já está ocupado neste setor.';return}
+  c.obs=(c.obs?c.obs+' | ':'')+`Remarcada de ${dt(c.data)} ${c.hora}`+(d.motivo?` (${d.motivo})`:'');c.data=d.data;c.hora=d.hora;c.status='agendada';ui.editing=null}
+ render();
+});
+// Banco compartilhado (quando disponível)
+let DB=null,pr=0;const sync={},KEYS=['pacientes','pront','cons'],busy=()=>/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||'');
+function pushDB(){if(!DB)return;
+ for(const k of KEYS)for(const it of S[k]){const j=JSON.stringify(it);if(sync[k+it.id]!==j){sync[k+it.id]=j;DB.collection(k).doc(it.id).set(it).catch(()=>{if(!pushDB.w){pushDB.w=1;toast('Não foi possível salvar no banco compartilhado. Peça ao professor permissão de Contribuidor.')}})}}
+ const cj=JSON.stringify(S.cfg);if(sync.cfg!==cj){sync.cfg=cj;DB.doc('config/clinica').set(S.cfg).catch(()=>{})}}
+function remote(){if(busy())pr=1;else render()}
+document.addEventListener('focusout',()=>setTimeout(()=>{if(pr&&!busy()){pr=0;render()}},250));
+async function initDB(){
+ try{const db=await window.claude?.use('db');if(!db)return;DB=db;
+  S.pacientes=[];S.pront=[];S.cons=[];sync.cfg=JSON.stringify(S.cfg);
+  for(const k of KEYS)db.collection(k).onSnapshot(snap=>{const m=new Map(S[k].map(x=>[x.id,x]));
+   snap.docChanges().forEach(ch=>{const id=ch.doc.id;if(ch.type=='removed'){m.delete(id);delete sync[k+id]}else{const d={...ch.doc.data()};m.set(id,d);sync[k+id]=JSON.stringify(d)}});
+   S[k]=[...m.values()];remote()},()=>{});
+  db.doc('config/clinica').onSnapshot(sn=>{if(sn.exists){S.cfg={...sn.data()};sync.cfg=JSON.stringify(S.cfg);remote()}},()=>{});
+  $('#sync').textContent='Simulação acadêmica · dados compartilhados';render();
+ }catch(e){}}
+render();initDB();
+</script>
+</body>
+</html>
