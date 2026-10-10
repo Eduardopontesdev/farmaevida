@@ -9,11 +9,11 @@
 @media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#101a14;--card:#18261d;--tx:#e8f2ea;--mut:#9bb0a2;--g:#4cb872;--gl:#1f3a28;--line:#2a3d31;--rose:#3a2128;--vio:#2a2540;--blu:#1f2d44;--org:#3d2f1d;--red:#ff7b6b}}
 :root[data-theme=dark]{--bg:#101a14;--card:#18261d;--tx:#e8f2ea;--mut:#9bb0a2;--g:#4cb872;--gl:#1f3a28;--line:#2a3d31;--rose:#3a2128;--vio:#2a2540;--blu:#1f2d44;--org:#3d2f1d;--red:#ff7b6b}
 *{box-sizing:border-box;margin:0}
-:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-html,body{height:100%}
+:root{--h:100vh}
+html,body{height:var(--h);overflow:hidden;overscroll-behavior:none}
 body{background:var(--bg);color:var(--tx);font:15px/1.4 Nunito,system-ui,sans-serif;display:flex;justify-content:center}
-#app{width:100%;max-width:480px;height:100%;display:flex;flex-direction:column;position:relative}
-main{flex:1;overflow-y:auto;padding:16px 16px 20px}
+#app{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:var(--h);display:flex;flex-direction:column}
+main{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(16px + env(safe-area-inset-top,0px)) 16px 20px}
 h1,h2{font-family:Fraunces,Georgia,serif}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--g);outline-offset:2px}
@@ -44,7 +44,7 @@ h3 button{color:var(--g);font-size:13px;font-weight:600}
 .sw.on{background:var(--g)}.sw.on::after{left:21px}
 .chk{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;color:#fff}
 .chk.on{background:var(--g);border-color:var(--g)}
-nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 0}
+nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 0 calc(6px + env(safe-area-inset-bottom,0px))}
 nav button{flex:1;display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--mut);padding:4px;position:relative}
 nav button b{font-size:20px;font-weight:400;filter:grayscale(1);opacity:.7}
 nav button.on{color:var(--g);font-weight:700}nav button.on b{filter:none;opacity:1}
@@ -62,10 +62,10 @@ nav i{position:absolute;top:0;left:55%;background:var(--red);color:#fff;font-siz
 .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
 .q{display:flex;align-items:center;gap:8px}.q button{width:28px;height:28px;border-radius:50%;background:var(--gl);color:var(--g);font-weight:700}
 .bar{display:flex;gap:6px;align-items:flex-end;height:80px;margin:8px 0}.bar div{flex:1;background:var(--g);border-radius:6px 6px 0 0;min-height:3px}
-@supports(height:100dvh){html,body,#app{height:100dvh}}
+@supports(height:100dvh){:root{--h:100dvh}}
 .sheet{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
 .upd{position:absolute;top:0;left:0;right:0;z-index:30;background:var(--g);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:14px}.upd .tab{color:var(--g)}
-@media print{nav,.noprint,.top{display:none!important}html,body,#app{height:auto!important;display:block!important}main{overflow:visible!important;padding:0!important}body{background:#fff}.paper,.nota{border:0!important}}
+@media print{nav,.noprint,.top{display:none!important}html,body,#app{height:auto!important;display:block!important;position:static!important;transform:none!important;overflow:visible!important}main{overflow:visible!important;padding:0!important}body{background:#fff}.paper,.nota{border:0!important}}
 .paper{background:#fff;color:#1d2b22;--tx:#1d2b22;--mut:#66756b;--line:#dfe8df;--g:#1c7a3e;--red:#c0392b;border-radius:12px;padding:18px 16px;border:1px solid var(--line)}
 .paper .hd{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid var(--g);padding-bottom:10px}.paper .hd small{display:block;font-size:11px;color:var(--mut);text-align:right}
 .pg{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;font-size:13px;margin:12px 0;padding:10px;background:#f3f8f2;border-radius:8px}.pg small{display:block;color:var(--mut);font-size:11px}
@@ -76,7 +76,7 @@ nav i{position:absolute;top:0;left:55%;background:var(--red);color:#fff;font-siz
 </style></head><body>
 <div id="app"><main id="v"></main><div class="toast" id="toast" role="status"></div><nav id="nav"></nav></div>
 <script>
-const APP_VER='2026-10-10.3';
+const APP_VER='2026-10-10.4';
 const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),uid=()=>Math.random().toString(36).slice(2,9);
 const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const br=d=>d.split('-').reverse().join('/'),R=n=>'R$ '+n.toFixed(2).replace('.',',');
@@ -213,7 +213,7 @@ function fire(r,fk){S.fired[fk]=1;notify(r.t+(r.b?' ('+r.b+')':'')+' – '+r.h);
 if(!$('#ov'))modal(`<h2>⏰ ${esc(r.t)}</h2><p style="color:var(--mut);margin-bottom:8px">${esc(r.b)} · ${r.h}</p><button class="btn" onclick="done('${r.k}');closeM()">Marcar como feito</button><button class="btn o" onclick="snooze('${fk}');closeM()">Adiar 10 min</button><button class="btn o" onclick="closeM()">Fechar</button>`);save();render()}
 function snooze(fk){S.snz[fk]=Date.now()+6e5;save();toast('Adiado por 10 minutos')}
 function timeSel(v){const [h,m]=(v||'09:00').split(':').map(Number),f=i=>String(i).padStart(2,'0');
-const hs=[...Array(24).keys()].map(i=>`<option ${i==h?'selected':''}>${f(i)}</option>`).join(''),ms=[...new Set([...Array(12).keys()].map(i=>i*5).concat(m))].sort((a,b)=>a-b).map(i=>`<option ${i==m?'selected':''}>${f(i)}</option>`).join('');
+const hs=[...Array(24).keys()].map(i=>`<option ${i==h?'selected':''}>${f(i)}</option>`).join(''),ms=[...Array(60).keys()].map(i=>`<option ${i==m?'selected':''}>${f(i)}</option>`).join('');
 return `<div style="display:flex;gap:8px;align-items:center"><select id="lh" aria-label="Hora">${hs}</select><b>:</b><select id="lm" aria-label="Minuto">${ms}</select></div>`}
 function addLem(){editLem()}
 function editLem(id){const c=S.custom.find(x=>x.id==id)||{n:'',d:'',t:'09:00'};modal(`<h2>${id?'Editar':'Novo'} lembrete</h2><div class="form"><input id="ln" placeholder="O que lembrar?" value="${esc(c.n)}"><input id="ld" placeholder="Detalhe (opcional)" value="${esc(c.d)}"><label class="sub">Horário</label>${timeSel(c.t)}</div><button class="btn" onclick="saveLem('${id||''}')">Salvar</button>${id?`<button class="btn o" style="color:var(--red);border-color:var(--red)" onclick="delLem('${id}')">Excluir lembrete</button>`:''}<button class="btn o" onclick="closeM()">Cancelar</button>`)}
@@ -288,6 +288,8 @@ function appBack(){if(!S.setup)return;if($('#ov'))return closeM();const pr={cart
 if(V.scr=='inicio')return toast('Para sair, toque em ✕ Fechar');const t=pr[V.scr]||'inicio';nav(t,['cart','orders','pedidos'].includes(t)?'pedidos':['consultas'].includes(t)?'consultas':'inicio')}
 history.replaceState({fv:0},'');history.pushState({fv:1},'');window.addEventListener('popstate',()=>{history.pushState({fv:1},'');appBack()});
 window.addEventListener('beforeunload',e=>{if(isApp()&&!window._exit){e.preventDefault();e.returnValue=''}});
+function fitH(){const h=window.visualViewport?visualViewport.height:innerHeight;document.documentElement.style.setProperty('--h',Math.round(h)+'px')}
+fitH();addEventListener('resize',fitH);addEventListener('orientationchange',()=>setTimeout(fitH,200));window.visualViewport&&visualViewport.addEventListener('resize',fitH);
 setInterval(()=>{tick();if(V.scr=='orders'&&!$('#ov'))render()},15000);addEventListener('visibilitychange',()=>{if(!document.hidden){tick();checkUpdate()}});addEventListener('focus',tick);
 theme();render();if(!S.setup)welcome();tick();setTimeout(checkUpdate,3000);
 </script></body></html>
