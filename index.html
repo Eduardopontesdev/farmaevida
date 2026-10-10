@@ -1,295 +1,262 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8">
+<html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Farma &amp; Vida – Prontuário e Agenda</title>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;700&family=Fraunces:wght@600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<title>Farma & Vida</title>
+<meta name="theme-color" content="#1c7a3e"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Farma & Vida"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;1,500&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
---bg:#eef3f1;--card:#fff;--ink:#16302d;--mut:#5d7471;--line:#d5e0dd;--pri:#0f5c55;--priInk:#fff;--soft:#dcebe7;--warn:#a85a00;
---farm:#1f7a63;--lab:#2f64a0;--man:#7b4d9c;--est:#b24a63}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a18;--card:#162623;--ink:#e4f0ed;--mut:#93aca8;--line:#2a403c;--pri:#4fb8a8;--priInk:#06201c;--soft:#1e3631;--warn:#e0a050;--farm:#4fbf9f;--lab:#6fa3e0;--man:#b98ce0;--est:#e58ba1}}
-:root[data-theme="dark"]{--bg:#0e1a18;--card:#162623;--ink:#e4f0ed;--mut:#93aca8;--line:#2a403c;--pri:#4fb8a8;--priInk:#06201c;--soft:#1e3631;--warn:#e0a050;--farm:#4fbf9f;--lab:#6fa3e0;--man:#b98ce0;--est:#e58ba1}
-*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Figtree,system-ui,sans-serif}
-h1,h2,h3{font-family:Fraunces,Georgia,serif;margin:0;font-weight:600}
-header{background:var(--pri);color:var(--priInk);padding:14px 18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-header h1{font-size:20px;flex:1;min-width:160px}
-nav{display:flex;gap:4px;padding:8px 12px;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--line)}
-nav button{white-space:nowrap}
-main{max-width:920px;margin:0 auto;padding:16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
-button,select,input,textarea{font:inherit;color:var(--ink)}
-button{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:7px 12px;cursor:pointer}
-button.pri{background:var(--pri);color:var(--priInk);border-color:var(--pri)}
-button.tab.on{background:var(--soft);border-color:var(--pri);font-weight:700}
-button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
-input,select,textarea{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
-label{display:block;font-size:13px;color:var(--mut);margin-bottom:8px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0 10px}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.sp{flex:1}.mut{color:var(--mut);font-size:13px}
-.tag{display:inline-block;padding:1px 9px;border-radius:99px;font-size:12px;font-weight:700;color:#fff}
-.farm{background:var(--farm)}.lab{background:var(--lab)}.man{background:var(--man)}.est{background:var(--est)}
-.tag.farm,.tag.lab,.tag.man,.tag.est{color:var(--bg)}
-.entry{border-left:4px solid var(--line);padding:6px 0 6px 12px;margin:10px 0}
-.entry.farm{border-color:var(--farm);background:none}.entry.lab{border-color:var(--lab);background:none}.entry.man{border-color:var(--man);background:none}.entry.est{border-color:var(--est);background:none}
-.ok{color:var(--farm);font-weight:700}.pend{color:var(--warn);font-weight:700}
-.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:520px}th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left}
-.qr{display:flex;gap:14px;flex-wrap:wrap;align-items:center;background:var(--soft);padding:12px;border-radius:10px;margin-top:10px}
-.qr #qrbox{background:#fff;padding:8px;border-radius:8px}
-code{word-break:break-all;font-size:12px;display:block;background:var(--bg);padding:6px;border-radius:6px;max-width:420px}
-.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.wd{text-align:center;font-size:12px;color:var(--mut)}
-.cell{min-height:78px;border:1px solid var(--line);border-radius:8px;padding:3px;background:var(--bg);overflow:hidden}
-.cell.today{border:2px solid var(--pri)}.cell.sel{background:var(--soft)}
-.dn{border:0;background:none;padding:0 4px;font-weight:700;font-size:13px}
-.chip{display:block;width:100%;text-align:left;font-size:11px;padding:1px 4px;margin-top:2px;border-radius:4px;border:0;color:var(--bg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}.stats b{font-size:22px;display:block}
-.foc{box-shadow:0 0 0 2px var(--pri);background:var(--soft)}
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9;overflow:auto}
-.recbox{background:var(--card);border:2px dashed var(--pri);border-radius:12px;padding:20px;max-width:520px;width:100%}
-@media(max-width:600px){.chip{font-size:0;height:8px;padding:0}.cell{min-height:58px}}
-@media(max-width:600px){input,select,textarea{font-size:16px}button:not(.chip):not(.dn){min-height:40px}.dn{min-height:28px;min-width:28px}main{padding:10px}.card{padding:12px}#pac{min-width:0;width:100%}}
-@media(min-width:1000px){main{max-width:1040px}}
-@media print{header,nav,.noprint{display:none!important}body.mo main{display:none}.ov{position:static;background:none;padding:0}.recbox{border:1px solid #000;color:#000;background:#fff}}
-</style>
-</head>
-<body>
-<header><h1>Farma &amp; Vida</h1><span id="sync" style="font-size:12px;opacity:.9">Simulação acadêmica · dados fictícios</span><div class="row noprint"><span class="mut" style="color:inherit">Paciente</span><select id="pac" style="width:auto;min-width:200px"></select></div></header>
-<nav id="nav"></nav>
-<main id="app"></main>
-<div id="modal"></div><div id="toast" role="status" class="noprint" style="display:none;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:10px;z-index:20"></div>
+:root{--bg:#f3f8f2;--card:#fff;--tx:#1d2b22;--mut:#66756b;--g:#1c7a3e;--gl:#e3f2e5;--line:#dfe8df;--rose:#fde8ec;--vio:#ece6fa;--blu:#e3eefc;--org:#fdeedd;--red:#c0392b}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#101a14;--card:#18261d;--tx:#e8f2ea;--mut:#9bb0a2;--g:#4cb872;--gl:#1f3a28;--line:#2a3d31;--rose:#3a2128;--vio:#2a2540;--blu:#1f2d44;--org:#3d2f1d;--red:#ff7b6b}}
+:root[data-theme=dark]{--bg:#101a14;--card:#18261d;--tx:#e8f2ea;--mut:#9bb0a2;--g:#4cb872;--gl:#1f3a28;--line:#2a3d31;--rose:#3a2128;--vio:#2a2540;--blu:#1f2d44;--org:#3d2f1d;--red:#ff7b6b}
+*{box-sizing:border-box;margin:0}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{height:100%}
+body{background:var(--bg);color:var(--tx);font:15px/1.4 Nunito,system-ui,sans-serif;display:flex;justify-content:center}
+#app{width:100%;max-width:480px;height:100%;display:flex;flex-direction:column;position:relative}
+main{flex:1;overflow-y:auto;padding:16px 16px 20px}
+h1,h2{font-family:Fraunces,Georgia,serif}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+.brand{font-family:Fraunces,serif;font-size:32px;color:var(--g);line-height:1}
+.sub{font-size:11px;color:var(--mut);letter-spacing:.04em}
+.search{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 14px;margin:12px 0;width:100%}
+.search input{flex:1;border:0;background:none;color:var(--tx);font:inherit;outline:0;min-width:0}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 4px;font-size:11px;text-align:center;font-weight:600;display:flex;flex-direction:column;gap:4px;align-items:center}
+.tile b{font-size:24px;font-weight:400}
+.banner{margin-top:14px;background:var(--gl);border-radius:16px;padding:14px;display:flex;gap:10px;align-items:center}
+.banner h2{font-size:16px;color:var(--g)}
+.tabs{display:flex;gap:6px;margin:10px 0 12px;overflow-x:auto}
+.tab{padding:7px 14px;border-radius:99px;background:var(--card);border:1px solid var(--line);font-size:13px;font-weight:600;white-space:nowrap}
+.tab.on{background:var(--g);color:#fff;border-color:var(--g)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px;display:flex;gap:12px;align-items:center;width:100%;text-align:left}
+.card .t{flex:1;min-width:0}.card .t small{display:block;color:var(--mut);font-size:12px}
+.ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:var(--gl);flex:none}
+.btn{display:block;width:100%;background:var(--g);color:#fff;border-radius:14px;padding:13px;font-weight:700;text-align:center;margin-top:10px}
+.btn.o{background:none;color:var(--g);border:1.5px solid var(--g)}
+.btn:disabled{opacity:.45}
+h3{font-size:15px;margin:16px 0 8px;display:flex;justify-content:space-between}
+h3 button{color:var(--g);font-size:13px;font-weight:600}
+.pill{font-size:11px;font-weight:700;padding:4px 10px;border-radius:99px;background:var(--blu);color:#2a5fb0;white-space:nowrap}
+.pill.ok{background:var(--gl);color:var(--g)}.pill.x{background:var(--rose);color:var(--red)}
+.sw{width:44px;height:26px;border-radius:99px;background:var(--line);position:relative;flex:none;transition:.2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+.sw.on{background:var(--g)}.sw.on::after{left:21px}
+.chk{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;color:#fff}
+.chk.on{background:var(--g);border-color:var(--g)}
+nav{display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 0}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--mut);padding:4px;position:relative}
+nav button b{font-size:20px;font-weight:400;filter:grayscale(1);opacity:.7}
+nav button.on{color:var(--g);font-weight:700}nav button.on b{filter:none;opacity:1}
+nav i{position:absolute;top:0;left:55%;background:var(--red);color:#fff;font-size:10px;font-style:normal;border-radius:99px;padding:0 5px}
+.top{display:flex;align-items:center;gap:8px;margin-bottom:4px}.top h1{font-size:22px;flex:1}
+.back{font-size:22px;padding:2px 8px}
+.empty{border:2px dashed var(--line);border-radius:14px;padding:20px;text-align:center;color:var(--mut);font-size:13px;width:100%}
+.toast{position:absolute;left:16px;right:16px;bottom:80px;background:var(--tx);color:var(--bg);padding:12px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:20}
+.toast.show{opacity:1}
+.ov{position:absolute;inset:0;background:#0007;z-index:10;display:flex;align-items:flex-end}
+.sheet{background:var(--bg);width:100%;max-height:88%;overflow:auto;border-radius:20px 20px 0 0;padding:18px 16px 24px}
+.sheet h2{font-size:20px;margin-bottom:10px}
+.form{display:flex;flex-direction:column;gap:8px}
+.form input,.form select{padding:11px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--tx);font:inherit;width:100%}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
+.q{display:flex;align-items:center;gap:8px}.q button{width:28px;height:28px;border-radius:50%;background:var(--gl);color:var(--g);font-weight:700}
+.bar{display:flex;gap:6px;align-items:flex-end;height:80px;margin:8px 0}.bar div{flex:1;background:var(--g);border-radius:6px 6px 0 0;min-height:3px}
+@media print{nav,.noprint,.top{display:none!important}html,body,#app{height:auto!important;display:block!important}main{overflow:visible!important;padding:0!important}body{background:#fff}.paper,.nota{border:0!important}}
+.paper{background:#fff;color:#1d2b22;--tx:#1d2b22;--mut:#66756b;--line:#dfe8df;--g:#1c7a3e;--red:#c0392b;border-radius:12px;padding:18px 16px;border:1px solid var(--line)}
+.paper .hd{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid var(--g);padding-bottom:10px}.paper .hd small{display:block;font-size:11px;color:var(--mut);text-align:right}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;font-size:13px;margin:12px 0;padding:10px;background:#f3f8f2;border-radius:8px}.pg small{display:block;color:var(--mut);font-size:11px}
+.rw{display:grid;grid-template-columns:1.5fr 1fr .8fr 1.2fr;gap:6px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}.rw.h{font-size:11px;color:var(--mut);font-weight:700;border-bottom:2px solid var(--g)}
+.sig{margin-top:26px;text-align:center;font-size:12px}.sig i{display:block;border-top:1px solid #1d2b22;width:60%;margin:0 auto 4px}
+.nota{background:var(--card);border:1px dashed var(--mut);border-radius:12px;padding:16px;font-size:14px}.nota hr{border:0;border-top:1px dashed var(--line);margin:10px 0}.nota .l{display:flex;justify-content:space-between;gap:8px;padding:2px 0}.nota h2{text-align:center;font-size:20px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<div id="app"><main id="v"></main><div class="toast" id="toast" role="status"></div><nav id="nav"></nav></div>
 <script>
-const SET={farm:['Farmácia clínica',120],lab:['Análises clínicas',80],man:['Farmácia de manipulação',150],est:['Estética farmacêutica',200]};
-const DED={farm:1,lab:1,man:0,est:0};
-const TABS=[['home','Início'],['pront','Prontuário'],['agenda','Agenda'],['prof','Profissionais'],['pag','Pagamentos'],['ir','Extrato IR']];
-const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const brl=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-const dt=d=>d.split('-').reverse().join('/');
-const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-const addD=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
-const uid=()=>Math.random().toString(36).slice(2,9);
-let S,ui={tab:'home',cal:addD(0).slice(0,7),day:addD(0),filt:'',editing:null,pix:null,newPac:false};
-function seed(){return{
- cfg:{chave:'',nome:'Farma & Vida',cidade:'Camocim'},sel:'p1',prof:[{id:'f1',nome:'Dra. Helena (Farmacêutica)',setor:'',reg:'CRF 0000'},{id:'f2',nome:'Dr. Carlos (Biomédico)',setor:'lab',reg:'CRBM 0000'},{id:'f3',nome:'Dra. Renata',setor:'est',reg:'CRF 0001'}],
- pacientes:[{id:'p1',nome:'Maria das Graças Lima',cpf:'123.456.789-00',nasc:'1968-04-12'},{id:'p2',nome:'João Pedro Alves',cpf:'987.654.321-00',nasc:'1991-09-30'}],
- pront:[
-  {id:uid(),pid:'p1',setor:'farm',data:addD(-40),prof:'Dra. Helena (Farmacêutica)',texto:'Revisão de medicamentos: losartana 50 mg e metformina 850 mg. Orientada sobre horários e adesão. Retorno em 60 dias.'},
-  {id:uid(),pid:'p1',setor:'lab',data:addD(-20),prof:'Dr. Carlos (Biomédico)',texto:'Hemograma, glicemia em jejum (112 mg/dL) e HbA1c (6,4%). Laudos entregues.'},
-  {id:uid(),pid:'p1',setor:'man',data:addD(-10),prof:'Dra. Helena (Farmacêutica)',texto:'Manipulado: vitamina D 7.000 UI, 30 cápsulas. Lote 0925-14.'},
-  {id:uid(),pid:'p2',setor:'est',data:addD(-15),prof:'Dra. Renata',texto:'Peeling químico superficial. Sem intercorrências. Fotoproteção reforçada.'}],
- cons:[
-  {id:uid(),pid:'p1',setor:'farm',data:addD(-40),hora:'09:00',valor:120,obs:'',status:'realizada',pago:true,pagoEm:addD(-40)},
-  {id:uid(),pid:'p1',setor:'lab',data:addD(-20),hora:'07:30',valor:80,obs:'Jejum 12h',status:'realizada',pago:true,pagoEm:addD(-20)},
-  {id:uid(),pid:'p1',setor:'farm',data:addD(5),hora:'10:00',valor:120,obs:'Trazer caixas dos remédios',status:'agendada',pago:false},
-  {id:uid(),pid:'p2',setor:'est',data:addD(7),hora:'15:30',valor:200,obs:'',status:'agendada',pago:false}]}}
-try{S=JSON.parse(localStorage.getItem('clinica')||'null')}catch(e){}
-S=S||seed();S.prof=S.prof||[];if(S.cfg&&S.cfg.nome=='Clinica Integrada')S.cfg.nome='Farma & Vida';
-const save=()=>{if(DB){pushDB();return}try{localStorage.setItem('clinica',JSON.stringify(S))}catch(e){}};
-const pac=id=>S.pacientes.find(p=>p.id==id)||{nome:'—'};
-const tag=s=>`<span class="tag ${s}">${SET[s][0]}</span>`;
-const setorOpts=(v)=>Object.entries(SET).map(([k,[n]])=>`<option value="${k}" ${k==v?'selected':''}>${n}</option>`).join('');
-
-// PIX (BR Code estático)
-const f=(i,v)=>i+String(v.length).padStart(2,'0')+v;
-function crc(s){let c=0xFFFF;for(let i=0;i<s.length;i++){c^=s.charCodeAt(i)<<8;for(let j=0;j<8;j++)c=c&0x8000?((c<<1)^0x1021)&0xFFFF:(c<<1)&0xFFFF}return c.toString(16).toUpperCase().padStart(4,'0')}
-const strip=s=>s.replace(/&/g,'e').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9 ]/g,'');
-function pixCode(key,nome,cidade,val,tx){const p=f('00','01')+f('26',f('00','br.gov.bcb.pix')+f('01',key))+f('52','0000')+f('53','986')+f('54',val.toFixed(2))+f('58','BR')+f('59',strip(nome).slice(0,25))+f('60',strip(cidade).slice(0,15))+f('62',f('05',tx))+'6304';return p+crc(p)}
-
-function head(){
- $('#pac').innerHTML=S.pacientes.map(p=>`<option value="${p.id}" ${p.id==S.sel?'selected':''}>${esc(p.nome)}</option>`).join('');
- $('#nav').innerHTML=TABS.map(([k,n])=>`<button class="tab ${ui.tab==k?'on':''}" data-act="tab" data-v="${k}">${n}</button>`).join('');
-}
-function render(){if(!S.pacientes.find(p=>p.id==S.sel)&&S.pacientes[0])S.sel=S.pacientes[0].id;head();({home:vHome,pront:vPront,agenda:vAgenda,prof:vProf,pag:vPag,ir:vIR})[ui.tab]();modal();save();
- if(ui.focus){const el=$('#c-'+ui.focus);if(el)el.scrollIntoView({block:'center'});ui.focus=null}
- if(ui.sd){const el=$('#dialist');if(el)el.scrollIntoView({block:'nearest',behavior:'smooth'});ui.sd=0}}
-const delBtn=(key,k,id,msg='Excluir mesmo?',lb='Excluir')=>ui.ask==key?`<span class="pend">${msg}</span><button class="pri" data-act="del" data-k="${k}" data-id="${id}">Sim, excluir</button><button data-act="ask" data-v="">Não</button>`:`<button data-act="ask" data-v="${key}">${lb}</button>`;
-const profOpts=(st)=>{const l=S.prof.filter(p=>!st||!p.setor||p.setor==st);return`<option value="">${l.length?'Selecione…':'Cadastre na aba Profissionais'}</option>`+l.map(p=>`<option>${esc(p.nome)}</option>`).join('')};
-function rm(k,id){S[k]=S[k].filter(x=>x.id!=id);delete sync[k+id];if(DB)DB.collection(k).doc(id).delete().catch(()=>toast('Não foi possível excluir no banco compartilhado. Peça permissão de Contribuidor.'))}
-const isOpen=c=>c.status=='agendada'||c.status=='confirmada';
-const MES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-function vHome(){
- const[y,m]=ui.cal.split('-').map(Number),first=new Date(y,m-1,1),n=new Date(y,m,0).getDate(),t=addD(0);
- const live=S.cons.filter(c=>c.status!='cancelada'),by=d=>live.filter(c=>c.data==d).sort((a,b)=>a.hora.localeCompare(b.hora));
- let cells=['dom','seg','ter','qua','qui','sex','sáb'].map(d=>`<div class="wd">${d}</div>`).join('');
- for(let i=0;i<first.getDay();i++)cells+='<div></div>';
- for(let d=1;d<=n;d++){const ds=`${ui.cal}-${String(d).padStart(2,'0')}`,l=by(ds);
-  cells+=`<div class="cell${ds==t?' today':''}${ds==ui.day?' sel':''}" data-d="${ds}"><button class="dn" data-act="day" data-v="${ds}" aria-label="Dia ${d}">${d}</button>${l.slice(0,2).map(c=>`<button class="chip ${c.setor}" data-act="day" data-v="${ds}" title="${esc(pac(c.pid).nome)} – ${SET[c.setor][0]}">${c.hora} ${esc(pac(c.pid).nome.split(' ')[0])}</button>`).join('')}${l.length>2?`<button class="dn mut" data-act="day" data-v="${ds}">+${l.length-2}</button>`:''}</div>`}
- const dia=by(ui.day),pend=live.filter(c=>!c.pago),prox=live.filter(c=>isOpen(c)&&c.data>=t&&c.data<=addD(7));
- $('#app').innerHTML=`<div class="stats"><div class="card"><b>${by(t).length}</b>consultas hoje</div><div class="card"><b>${prox.length}</b>nos próximos 7 dias</div><div class="card"><b>${brl(pend.reduce((s,c)=>s+c.valor,0))}</b>a receber (${pend.length})</div></div>
- <div class="card"><div class="row" style="margin-bottom:10px"><button data-act="mm" data-v="-1" aria-label="Mês anterior">‹</button><h3 class="sp" style="text-align:center">${MES[m-1]} de ${y}</h3><button data-act="mm" data-v="1" aria-label="Próximo mês">›</button></div><div class="cal">${cells}</div>
- <div class="row mut" style="margin-top:8px">${Object.entries(SET).map(([k,[nm]])=>`<span class="tag ${k}">${nm}</span>`).join('')}</div></div>
- <div class="card" id="dialist"><h3 style="margin-bottom:6px">Consultas de ${dt(ui.day)}</h3>${dia.length?dia.map(c=>`<div class="entry ${c.setor}"><div class="row"><b>${c.hora}</b>${tag(c.setor)}<span>${esc(pac(c.pid).nome)}</span><span class="mut">· ${c.status}</span>${c.prof?`<span class="mut">· ${esc(c.prof)}</span>`:''}${c.pago?'<span class="ok">Pago</span>':'<span class="pend">A pagar</span>'}<span class="sp"></span><button class="pri" data-act="goto" data-id="${c.id}">Abrir na agenda</button>${c.status=='agendada'?`<button data-act="confirm" data-id="${c.id}">Confirmar</button>`:''}${isOpen(c)?`<button data-act="gorem" data-id="${c.id}">Remarcar</button><button data-act="gocan" data-id="${c.id}">Cancelar</button>`:''}</div>${c.obs?`<div class="mut">Obs.: ${esc(c.obs)}</div>`:''}</div>`).join(''):'<p class="mut">Nenhuma consulta neste dia. Clique em outro dia ou marque uma nova na Agenda.</p>'}</div>`;
-}
-function toast(t){const el=$('#toast');el.textContent=t;el.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>el.style.display='none',7000)}
-function vProf(){
- $('#app').innerHTML=`<form id="fprof" class="card"><h3 style="margin-bottom:10px">Cadastrar profissional</h3><div class="grid"><label>Nome<input name="nome" required placeholder="Ex.: Dra. Ana Lima"></label><label>Setor<select name="setor"><option value="">Todos os setores</option>${setorOpts('')}</select></label><label>Registro (CRF/CRM/CRBM)<input name="reg"></label></div><button class="pri">Cadastrar</button></form>
- <div class="card"><h3 style="margin-bottom:6px">Profissionais (${S.prof.length})</h3>${S.prof.length?S.prof.map(q=>`<div class="entry ${q.setor||''}"><div class="row"><b>${esc(q.nome)}</b>${q.setor?tag(q.setor):'<span class="mut">Todos os setores</span>'}${q.reg?`<span class="mut">${esc(q.reg)}</span>`:''}<span class="sp"></span>${delBtn('f'+q.id,'prof',q.id,'Excluir profissional? Registros antigos mantêm o nome.')}</div></div>`).join(''):'<p class="mut">Nenhum profissional cadastrado ainda.</p>'}</div>
- <div class="card"><h3>Zerar simulação</h3><p class="mut">Apaga todos os pacientes, profissionais, prontuários e consultas, para todos os usuários. Os dados de PIX e do recibo são mantidos.</p>
- ${ui.zero?`<form id="fzero" class="row"><input name="conf" placeholder="Digite ZERAR" style="max-width:200px" autocomplete="off"><button class="pri">Apagar tudo</button><button type="button" data-act="zero">Cancelar</button></form><div class="pend" id="zmsg"></div>`:'<button data-act="zero">Zerar todos os dados</button>'}</div>`}
-function recNo(c){if(!c.recNo)c.recNo=Math.max(0,...S.cons.map(x=>x.recNo||0))+1;return String(c.recNo).padStart(5,'0')}
-function recText(c){const p=pac(c.pid);return`RECIBO Nº ${recNo(c)}\n${S.cfg.nome}${S.cfg.doc?' – '+S.cfg.doc:''}\nRecebemos de ${p.nome}${p.cpf?' (CPF '+p.cpf+')':''} a quantia de ${brl(c.valor)}, referente a ${SET[c.setor][0]} (${dt(c.data)}), paga via PIX em ${dt(c.pagoEm)}.\n${S.cfg.cidade}, ${dt(c.pagoEm)}.`}
-function modal(){const mo=$('#modal'),c=ui.rec&&S.cons.find(x=>x.id==ui.rec);document.body.classList.toggle('mo',!!c);
- if(!c){mo.innerHTML='';return}const p=pac(c.pid);
- mo.innerHTML=`<div class="ov"><div class="recbox" role="dialog" aria-label="Recibo"><div class="row"><h2 class="sp">Recibo nº ${recNo(c)}</h2><span class="ok">Pagamento confirmado</span></div>
- <p style="font-size:24px;margin:10px 0"><b>${brl(c.valor)}</b></p>
- <p>Recebemos de <b>${esc(p.nome)}</b>${p.cpf?`, CPF ${esc(p.cpf)}`:''}, a quantia de <b>${brl(c.valor)}</b>, referente a <b>${SET[c.setor][0]}</b> (${dt(c.data)} às ${c.hora}), paga via PIX em ${dt(c.pagoEm)}.</p>
- <p class="mut">${esc(S.cfg.nome)}${S.cfg.doc?` · ${esc(S.cfg.doc)}`:''}<br>${esc(S.cfg.cidade)}, ${dt(c.pagoEm)}</p>
- <div class="row noprint"><button class="pri" data-act="print">Imprimir / salvar PDF</button><button data-act="copyrec">Copiar recibo</button><button data-act="closerec">Fechar</button></div></div></div>`}
-
-function vPront(){
- if(!S.pacientes.length){$('#app').innerHTML=`<div class="card"><h3>Nenhum paciente cadastrado</h3><form id="fpac" class="grid" style="margin-top:12px"><label>Nome<input name="nome" required></label><label>CPF<input name="cpf" placeholder="000.000.000-00"></label><label>Nascimento<input type="date" name="nasc"></label><div><button class="pri">Cadastrar paciente</button></div></form></div>`;return}
- const cl=S.cons.filter(c=>c.pid==S.sel).sort((a,b)=>b.data.localeCompare(a.data));
- const p=pac(S.sel),list=S.pront.filter(e=>e.pid==S.sel&&(!ui.filt||e.setor==ui.filt)).sort((a,b)=>b.data.localeCompare(a.data));
- $('#app').innerHTML=`
- <div class="card"><div class="row"><div class="sp"><h2>${esc(p.nome)}</h2><div class="mut">CPF ${esc(p.cpf||'—')} · Nascimento ${p.nasc?dt(p.nasc):'—'}</div></div>
- <button data-act="editp">${ui.editP?'Fechar edição':'Editar dados'}</button><button data-act="newpac">${ui.newPac?'Fechar':'Novo paciente'}</button>${delBtn('p'+S.sel,'pacientes',S.sel,'Excluir paciente, prontuário e consultas dele?','Excluir paciente')}</div>
- ${ui.newPac?`<form id="fpac" class="grid" style="margin-top:12px"><label>Nome<input name="nome" required></label><label>CPF<input name="cpf" placeholder="000.000.000-00"></label><label>Nascimento<input type="date" name="nasc"></label><div><button class="pri">Cadastrar paciente</button></div></form>`:''}
- ${ui.editP?`<form id="fpedit" class="grid" style="margin-top:12px"><label>Nome<input name="nome" value="${esc(p.nome)}" required></label><label>CPF<input name="cpf" value="${esc(p.cpf)}"></label><label>Nascimento<input type="date" name="nasc" value="${p.nasc||''}"></label><div><button class="pri">Salvar alterações</button></div></form>`:''}</div>
- <div class="card"><div class="row"><h3 class="sp">Consultas do paciente</h3><button class="pri" data-act="tab" data-v="agenda">Marcar consulta</button></div>
- ${cl.length?cl.map(c=>`<div class="entry ${c.setor}"><div class="row"><b>${dt(c.data)} ${c.hora}</b>${tag(c.setor)}${c.prof?`<span class="mut">${esc(c.prof)}</span>`:''}<span class="${c.status=='agendada'?'pend':c.status=='cancelada'?'mut':'ok'}">${c.status}</span>${c.pago?'<span class="ok">Pago</span>':'<span class="pend">A pagar</span>'}<span class="sp"></span><button data-act="goto" data-id="${c.id}">Abrir na agenda</button></div></div>`).join(''):'<p class="mut">Nenhuma consulta para este paciente.</p>'}</div>
- <div class="card"><h3>Prontuário geral</h3>
- <div class="row" style="margin:10px 0"><button class="tab ${!ui.filt?'on':''}" data-act="filt" data-v="">Todos os setores</button>${Object.entries(SET).map(([k,[n]])=>`<button class="tab ${ui.filt==k?'on':''}" data-act="filt" data-v="${k}">${n}</button>`).join('')}</div>
- ${list.length?list.map(e=>`<div class="entry ${e.setor}"><div class="row">${tag(e.setor)}<b>${dt(e.data)}</b><span class="mut">${esc(e.prof)}</span><span class="sp"></span><button data-act="edite" data-id="${e.id}">${ui.editE==e.id?'Fechar':'Editar'}</button></div><div>${esc(e.texto)}</div>${e.edit?`<div class="mut">Editado em ${dt(e.edit)}</div>`:''}${ui.editE==e.id?`<form class="fedit" data-id="${e.id}" style="margin-top:8px"><div class="grid"><label>Setor<select name="setor">${setorOpts(e.setor)}</select></label><label>Data<input type="date" name="data" value="${e.data}" required></label><label>Profissional<input name="prof" list="dl${e.id}" value="${esc(e.prof)}" required><datalist id="dl${e.id}">${S.prof.map(q=>`<option value="${esc(q.nome)}">`).join('')}</datalist></label></div><label>Evolução<textarea name="texto" rows="3" required>${esc(e.texto)}</textarea></label><button class="pri">Salvar alterações</button></form>`:''}</div>`).join(''):'<p class="mut">Nenhum registro neste filtro. Adicione o primeiro abaixo.</p>'}</div>
- <form id="freg" class="card"><h3 style="margin-bottom:10px">Novo registro</h3><div class="grid"><label>Setor<select name="setor">${setorOpts(ui.filt||'farm')}</select></label><label>Data<input type="date" name="data" value="${addD(0)}" required></label><label>Profissional<select name="prof" required>${profOpts('')}</select></label></div><label>Evolução / observações<textarea name="texto" rows="3" required></textarea></label><button class="pri">Salvar no prontuário</button></form>`;
-}
-
-function vAgenda(){
- const l=[...S.cons].sort((a,b)=>(a.data+a.hora).localeCompare(b.data+b.hora));
- $('#app').innerHTML=`
- <form id="fag" class="card"><h3 style="margin-bottom:10px">Marcar consulta</h3><div class="grid">
- <label>Paciente<select name="pid">${S.pacientes.map(p=>`<option value="${p.id}" ${p.id==S.sel?'selected':''}>${esc(p.nome)}</option>`).join('')}</select></label>
- <label>Setor<select name="setor" id="ssetor">${setorOpts('farm')}</select></label>
- <label>Profissional<select name="prof" id="sprof" required>${profOpts('farm')}</select></label>
- <label>Data<input type="date" name="data" min="${addD(0)}" required></label>
- <label>Horário<input type="time" name="hora" required></label>
- <label>Valor (R$)<input type="number" step="0.01" min="0" name="valor" id="sval" value="${SET.farm[1]}"></label></div>
- <label>Observação<input name="obs" placeholder="Ex.: jejum de 12h, trazer exames anteriores"></label>
- <div id="msg" class="pend"></div><button class="pri">Marcar consulta</button></form>
- <div class="card"><h3 style="margin-bottom:6px">Consultas</h3>${l.length?l.map(c=>{const ed=ui.editing==c.id;return`
- <div class="entry ${c.setor}${ui.focus==c.id?' foc':''}" id="c-${c.id}"><div class="row">${tag(c.setor)}<b>${dt(c.data)} às ${c.hora}</b><span>${esc(pac(c.pid).nome)}</span>${c.prof?`<span class="mut">· ${esc(c.prof)}</span>`:''}<span class="sp"></span>
- <span class="${c.status=='agendada'?'pend':c.status=='cancelada'?'mut':'ok'}">${c.status[0].toUpperCase()+c.status.slice(1)}</span></div>
- ${c.obs?`<div class="mut">Obs.: ${esc(c.obs)}</div>`:''}
- ${isOpen(c)?`<div class="row" style="margin-top:6px">${c.status=='agendada'?`<button class="pri" data-act="confirm" data-id="${c.id}">Confirmar consulta</button>`:''}<button data-act="resched" data-id="${c.id}">${ed?'Fechar':'Remarcar'}</button><button data-act="done" data-id="${c.id}">Marcar como realizada</button><button data-act="cancel" data-id="${c.id}">Cancelar consulta</button></div>`:c.status=='cancelada'?`<div class="row" style="margin-top:6px"><button data-act="react" data-id="${c.id}">Reativar consulta</button></div>`:''}
- ${ui.cancel==c.id?`<form class="fcan grid" data-id="${c.id}" style="margin-top:8px"><label>Motivo do cancelamento (opcional)<input name="motivo"></label><div><button class="pri">Confirmar cancelamento</button></div></form>`:''}
- ${ed?`<form class="frem grid" data-id="${c.id}" style="margin-top:8px"><label>Nova data<input type="date" name="data" min="${addD(0)}" value="${c.data}" required></label><label>Novo horário<input type="time" name="hora" value="${c.hora}" required></label><label>Motivo (opcional)<input name="motivo"></label><div><button class="pri">Confirmar remarcação</button></div></form><div class="pend" id="rmsg"></div>`:''}<div class="row" style="margin-top:6px">${delBtn('c'+c.id,'cons',c.id,'Excluir esta consulta?')}</div></div>`}).join(''):'<p class="mut">Nenhuma consulta marcada.</p>'}</div>`;
-}
-
-function vPag(){
- const l=S.cons.filter(c=>c.status!='cancelada').sort((a,b)=>b.data.localeCompare(a.data));
- const k=S.cfg;
- $('#app').innerHTML=`
- <div class="card"><h3>Dados de recebimento PIX</h3><p class="mut">Informe a chave PIX da clínica. O QR Code é gerado no padrão do Banco Central e o dinheiro cai direto na sua conta.</p>
- <form id="fcfg" class="grid"><label>Chave PIX (CPF/CNPJ, e-mail, celular ou aleatória)<input name="chave" value="${esc(k.chave)}"></label><label>Nome do recebedor<input name="nome" value="${esc(k.nome)}"></label><label>Cidade<input name="cidade" value="${esc(k.cidade)}"></label><label>CNPJ/CPF da clínica (no recibo)<input name="doc" value="${esc(k.doc||'')}"></label><div><button class="pri">Salvar dados</button></div></form></div>
- <div class="card"><h3 style="margin-bottom:6px">Cobranças</h3><div class="scroll"><table><tr><th>Data</th><th>Paciente</th><th>Setor</th><th>Valor</th><th>Situação</th><th></th></tr>
- ${l.map(c=>`<tr><td>${dt(c.data)}</td><td>${esc(pac(c.pid).nome)}</td><td>${SET[c.setor][0]}</td><td>${brl(c.valor)}</td>
- <td>${c.pago?`<span class="ok">Pago em ${dt(c.pagoEm)}</span>`:'<span class="pend">Pendente</span>'}</td>
- <td>${c.pago?`<button data-act="rec" data-id="${c.id}">Ver recibo</button>`:`<button class="pri" data-act="pix" data-id="${c.id}">Pagar com PIX</button>`}</td></tr>`).join('')}</table></div>
- <div id="pixbox"></div></div>`;
- if(ui.pix)showPix(ui.pix);
-}
-function showPix(id){
- ui.pix=id;const c=S.cons.find(x=>x.id==id),box=$('#pixbox');if(!c||!box)return;
- if(!S.cfg.chave.trim()){box.innerHTML='<div class="qr"><b class="pend">Cadastre a chave PIX da clínica acima para gerar o QR Code.</b></div>';return}
- const code=pixCode(S.cfg.chave.trim(),S.cfg.nome,S.cfg.cidade,c.valor,'CLI'+c.id.replace(/[^A-Za-z0-9]/g,'').slice(0,20));
- box.innerHTML=`<div class="qr"><div id="qrbox"></div><div><b>${brl(c.valor)}</b> · ${esc(pac(c.pid).nome)}<br><span class="mut">${SET[c.setor][0]} – ${dt(c.data)}</span>
- <code id="code">${code}</code><div class="row" style="margin-top:8px"><button data-act="copy" data-v="${code}">Copiar PIX copia e cola</button><button class="pri" data-act="paid" data-id="${c.id}">Confirmar pagamento recebido</button></div></div></div>`;
- try{new QRCode($('#qrbox'),{text:code,width:150,height:150,correctLevel:QRCode.CorrectLevel.M})}catch(e){$('#qrbox').textContent='Use o código copia e cola.'}
-}
-
-function vIR(){
- const yrs=[...new Set(S.cons.filter(c=>c.pago).map(c=>c.pagoEm.slice(0,4)).concat([String(new Date().getFullYear())]))].sort().reverse();
- ui.ano=ui.ano||yrs[0];
- const l=S.cons.filter(c=>c.pid==S.sel&&c.pago&&c.pagoEm.startsWith(ui.ano)).sort((a,b)=>a.pagoEm.localeCompare(b.pagoEm));
- const tot=l.reduce((s,c)=>s+c.valor,0),ded=l.filter(c=>DED[c.setor]).reduce((s,c)=>s+c.valor,0),p=pac(S.sel);
- $('#app').innerHTML=`<div class="card"><div class="row noprint"><h3 class="sp">Extrato para Imposto de Renda</h3><label style="margin:0">Ano<select id="ano" style="width:auto">${yrs.map(y=>`<option ${y==ui.ano?'selected':''}>${y}</option>`).join('')}</select></label></div>
- <p><b>${esc(p.nome)}</b> · CPF ${esc(p.cpf||'—')}<br><span class="mut">Prestador: ${esc(S.cfg.nome)} · Pagamentos confirmados em ${ui.ano}</span></p>
- <div class="scroll"><table><tr><th>Pago em</th><th>Serviço</th><th>Valor</th><th>Dedutível*</th></tr>
- ${l.map(c=>`<tr><td>${dt(c.pagoEm)}</td><td>${SET[c.setor][0]} (${dt(c.data)})</td><td>${brl(c.valor)}</td><td>${DED[c.setor]?'Sim':'Não'}</td></tr>`).join('')||'<tr><td colspan="4" class="mut">Nenhum pagamento confirmado neste ano.</td></tr>'}
- </table></div>
- <p><b>Total pago: ${brl(tot)}</b><br><b>Total potencialmente dedutível: ${brl(ded)}</b></p>
- <p class="mut">*Classificação sugerida: serviços de análises e farmácia clínica prestados por profissional de saúde costumam entrar em despesas médicas; manipulados (produtos) e estética geralmente não. Confirme com seu contador. Para declarar, o recibo precisa ter nome, CPF/CNPJ do prestador e dados do paciente.</p>
- <div class="row noprint"><button class="pri" data-act="copyir">Copiar extrato</button><button data-act="print">Imprimir / salvar PDF</button></div></div>`;
-}
-function irText(){
- const p=pac(S.sel),l=S.cons.filter(c=>c.pid==S.sel&&c.pago&&c.pagoEm.startsWith(ui.ano));
- return`EXTRATO ${ui.ano} – ${S.cfg.nome}\nPaciente: ${p.nome} (CPF ${p.cpf||'—'})\n`+l.map(c=>`${dt(c.pagoEm)} | ${SET[c.setor][0]} | ${brl(c.valor)} | dedutível: ${DED[c.setor]?'sim':'não'}`).join('\n')+`\nTOTAL: ${brl(l.reduce((s,c)=>s+c.valor,0))}`;
-}
-async function copy(t,btn){try{await navigator.clipboard.writeText(t);btn.textContent='Copiado!'}catch(e){const r=document.createRange(),el=btn.parentNode.previousElementSibling;btn.textContent='Selecione o texto e copie'}}
-
-document.addEventListener('click',e=>{
- const b=e.target.closest('[data-act]');if(!b){const c=e.target.closest('.cell');if(c){ui.day=c.dataset.d;ui.sd=1;render()}return}const a=b.dataset.act,id=b.dataset.id;
- if(a=='tab'){ui.tab=b.dataset.v;ui.editing=null}
- else if(a=='filt')ui.filt=b.dataset.v;
- else if(a=='ask')ui.ask=b.dataset.v;
- else if(a=='zero')ui.zero=!ui.zero;
- else if(a=='del'){const k=b.dataset.k;if(k=='pacientes'){S.pront.filter(x=>x.pid==id).forEach(x=>rm('pront',x.id));S.cons.filter(x=>x.pid==id).forEach(x=>rm('cons',x.id))}rm(k,id);ui.ask='';if(k=='pacientes'&&S.sel==id)S.sel=''}
- else if(a=='newpac')ui.newPac=!ui.newPac;
- else if(a=='editp')ui.editP=!ui.editP;
- else if(a=='edite')ui.editE=ui.editE==id?null:id;
- else if(a=='resched')ui.editing=ui.editing==id?null:id;
- else if(a=='done')S.cons.find(c=>c.id==id).status='realizada';
- else if(a=='cancel')ui.cancel=ui.cancel==id?null:id;
- else if(a=='confirm')S.cons.find(c=>c.id==id).status='confirmada';
- else if(a=='gocan'){ui.tab='agenda';ui.focus=id;ui.cancel=id}
- else if(a=='react'){const c=S.cons.find(x=>x.id==id);if(S.cons.some(o=>o.id!=id&&isOpen(o)&&o.setor==c.setor&&o.data==c.data&&o.hora==c.hora)){toast('Esse horário já foi ocupado por outra consulta.');return}c.status='agendada'}
- else if(a=='pix'){ui.pix=id;render();$('#pixbox').scrollIntoView({block:'nearest'});return}
- else if(a=='paid'){const c=S.cons.find(x=>x.id==id);c.pago=true;c.pagoEm=addD(0);ui.pix=null;ui.rec=id}
- else if(a=='rec')ui.rec=id;
- else if(a=='closerec')ui.rec=null;
- else if(a=='copyrec'){copy(recText(S.cons.find(c=>c.id==ui.rec)),b);return}
- else if(a=='day'){ui.day=b.dataset.v;ui.sd=1}
- else if(a=='gorem'){ui.tab='agenda';ui.focus=id;ui.editing=id}
- else if(a=='goto'){ui.tab='agenda';ui.focus=id;ui.editing=null}
- else if(a=='mm'){const[y,m]=ui.cal.split('-').map(Number);ui.cal=iso(new Date(y,m-1+ +b.dataset.v,1)).slice(0,7)}
- else if(a=='copy'){copy(b.dataset.v,b);return}
- else if(a=='copyir'){copy(irText(),b);return}
- else if(a=='print'){try{window.print()}catch(x){}toast('Se a janela de impressão não abriu, abra o app em uma aba própria do navegador ou use "Copiar".');return}
- render();
-});
-document.addEventListener('change',e=>{
- if(e.target.id=='pac'){S.sel=e.target.value;render()}
- if(e.target.id=='ano'){ui.ano=e.target.value;render()}
- if(e.target.id=='ssetor'){$('#sval').value=SET[e.target.value][1];$('#sprof').innerHTML=profOpts(e.target.value)}
-});
-document.addEventListener('submit',e=>{
- e.preventDefault();const f=e.target,d=Object.fromEntries(new FormData(f));
- if(f.id=='fpac'){const p={id:uid(),nome:d.nome,cpf:d.cpf,nasc:d.nasc};S.pacientes.push(p);S.sel=p.id;ui.newPac=false}
- else if(f.id=='fpedit'){Object.assign(pac(S.sel),d);ui.editP=false}
- else if(f.classList.contains('fedit')){Object.assign(S.pront.find(x=>x.id==f.dataset.id),d,{edit:addD(0)});ui.editE=null}
- else if(f.classList.contains('fcan')){const c=S.cons.find(x=>x.id==f.dataset.id);c.status='cancelada';c.obs=(c.obs?c.obs+' | ':'')+`Cancelada em ${dt(addD(0))}`+(d.motivo?` (${d.motivo})`:'');ui.cancel=null}
- else if(f.id=='fprof'){S.prof.push({id:uid(),nome:d.nome,setor:d.setor,reg:d.reg})}
- else if(f.id=='fzero'){if((d.conf||'').trim().toUpperCase()!='ZERAR'){$('#zmsg').textContent='Digite ZERAR para confirmar.';return}KEYS.forEach(k=>S[k].slice().forEach(x=>rm(k,x.id)));S.sel='';ui.zero=false}
- else if(f.id=='freg'){S.pront.push({id:uid(),pid:S.sel,...d})}
- else if(f.id=='fcfg'){S.cfg={chave:d.chave,nome:d.nome||'Clinica',cidade:d.cidade||'Cidade',doc:d.doc||''}}
- else if(f.id=='fag'){
-  if(S.cons.some(c=>isOpen(c)&&c.setor==d.setor&&c.data==d.data&&c.hora==d.hora)){$('#msg').textContent='Esse horário já está ocupado neste setor. Escolha outro.';return}
-  S.cons.push({id:uid(),pid:d.pid,prof:d.prof,setor:d.setor,data:d.data,hora:d.hora,valor:+d.valor||0,obs:d.obs,status:'agendada',pago:false})}
- else if(f.classList.contains('frem')){
-  const c=S.cons.find(x=>x.id==f.dataset.id);
-  if(S.cons.some(o=>o.id!=c.id&&isOpen(o)&&o.setor==c.setor&&o.data==d.data&&o.hora==d.hora)){$('#rmsg').textContent='Esse horário já está ocupado neste setor.';return}
-  c.obs=(c.obs?c.obs+' | ':'')+`Remarcada de ${dt(c.data)} ${c.hora}`+(d.motivo?` (${d.motivo})`:'');c.data=d.data;c.hora=d.hora;c.status='agendada';ui.editing=null}
- render();
-});
-// Banco compartilhado (quando disponível)
-let DB=null,pr=0;const sync={},KEYS=['pacientes','pront','cons','prof'],busy=()=>/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||'');
-function pushDB(){if(!DB)return;
- for(const k of KEYS)for(const it of S[k]){const j=JSON.stringify(it);if(sync[k+it.id]!==j){sync[k+it.id]=j;DB.collection(k).doc(it.id).set(it).catch(()=>{if(!pushDB.w){pushDB.w=1;toast('Não foi possível salvar no banco compartilhado. Peça ao professor permissão de Contribuidor.')}})}}
- const cj=JSON.stringify(S.cfg);if(sync.cfg!==cj){sync.cfg=cj;DB.doc('config/clinica').set(S.cfg).catch(()=>{})}}
-function remote(){if(busy())pr=1;else render()}
-document.addEventListener('focusout',()=>setTimeout(()=>{if(pr&&!busy()){pr=0;render()}},250));
-async function initDB(){
- try{const db=await window.claude?.use('db');if(!db)return;DB=db;
-  S.pacientes=[];S.pront=[];S.cons=[];S.prof=[];sync.cfg=JSON.stringify(S.cfg);
-  for(const k of KEYS)db.collection(k).onSnapshot(snap=>{const m=new Map(S[k].map(x=>[x.id,x]));
-   snap.docChanges().forEach(ch=>{const id=ch.doc.id;if(ch.type=='removed'){m.delete(id);delete sync[k+id]}else{const d={...ch.doc.data()};m.set(id,d);sync[k+id]=JSON.stringify(d)}});
-   S[k]=[...m.values()];remote()},()=>{});
-  db.doc('config/clinica').onSnapshot(sn=>{if(sn.exists){S.cfg={...sn.data()};sync.cfg=JSON.stringify(S.cfg);remote()}},()=>{});
-  $('#sync').textContent='Simulação acadêmica · dados compartilhados';render();
- }catch(e){}}
-render();initDB();
-</script>
-</body>
-</html>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),uid=()=>Math.random().toString(36).slice(2,9);
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const br=d=>d.split('-').reverse().join('/'),R=n=>'R$ '+n.toFixed(2).replace('.',',');
+const DEF={name:'',theme:'',meds:[{id:'m1',n:'Losartana 50mg',d:'1 comprimido',t:['08:00','20:00'],on:1,i:'💊'},{id:'m2',n:'Metformina 850mg',d:'1 comprimido',t:['08:00','20:00'],on:1,i:'💊'},{id:'m3',n:'Vitamina D (Manipulado)',d:'1 cápsula',t:['08:00'],on:1,i:'🟡'},{id:'m4',n:'Ômega 3',d:'1 cápsula',t:['08:00'],on:1,i:'💊'}],hist:[],exams:[{id:'e1',n:'Hemograma Completo',date:'2026-10-10',r:'Hemoglobina 13,8 g/dL · Leucócitos 6.800/mm³ · Plaquetas 245 mil/mm³. Valores dentro da referência.'},{id:'e2',n:'Glicemia',date:'2026-10-10',r:'Glicemia de jejum: 92 mg/dL (referência 70–99).'}],cart:[],orders:[],appts:[],log:{},custom:[{id:'c1',n:'Água',d:'Beber 200 ml',t:'12:00',i:'💧'},{id:'c2',n:'Caminhada',d:'30 minutos',t:'15:00',i:'🏃'}],notifs:[]};
+let S;try{S=JSON.parse(localStorage.getItem('fv2'))||structuredClone(DEF)}catch(e){S=structuredClone(DEF)}
+S.labs=S.labs||[];
+const save=()=>{try{localStorage.setItem('fv2',JSON.stringify(S))}catch(e){}};
+const CAT=[['Controlados','🔴','rose'],['Uso contínuo','🔵','blu'],['Manipulados','🟣','vio'],['Fitoterápicos','🌿','gl'],['Dermocosméticos','🌸','rose'],['Suplementos','🟠','org']];
+const PROD=[['Clonazepam 2mg','Controlados',18.9,1],['Fluoxetina 20mg','Controlados',24.5,1],['Losartana 50mg','Uso contínuo',12.9],['Metformina 850mg','Uso contínuo',14.7],['Atenolol 25mg','Uso contínuo',9.8],['Sinvastatina 20mg','Uso contínuo',11.2],['Vitamina D manipulada','Manipulados',39],['Fórmula dermatológica','Manipulados',58],['Cápsulas de magnésio','Manipulados',44],['Valeriana 300mg','Fitoterápicos',27.5],['Camomila em cápsulas','Fitoterápicos',22],['Hipérico 300mg','Fitoterápicos',31],['Protetor solar FPS 50','Dermocosméticos',54.9],['Sérum vitamina C','Dermocosméticos',89],['Ômega 3','Suplementos',36.9],['Colágeno hidrolisado','Suplementos',64]];
+const SVC=[['👩‍⚕️','Consulta Farmacêutica','Acompanhamento do uso de medicamentos, revisão da terapia e orientação em saúde.','Farmácia Clínica'],['❤️','Acompanhamento de Doenças Crônicas','Diabetes, hipertensão, colesterol, asma, etc.','Farmácia Clínica'],['💊','Ajuste de Tratamento Farmacoterapêutico','Segurança e melhores resultados.','Farmácia Clínica'],['🍎','Acompanhamento Nutricional','Em parceria com profissionais da área.','Farmácia Clínica'],['🌿','Consulta de Fitoterapia','Uso de plantas medicinais e orientação terapêutica.','Fitoterapia'],['🌸','Consulta Estética','Avaliação da pele, protocolos estéticos e cuidados personalizados.','Estética']];
+const PR={'Consulta Farmacêutica':80,'Acompanhamento de Doenças Crônicas':90,'Ajuste de Tratamento Farmacoterapêutico':90,'Acompanhamento Nutricional':120,'Consulta de Fitoterapia':70,'Consulta Estética':110},MT={pix:'Pix',card:'Cartão de crédito',cash:'Dinheiro',clinic:'Pagar na clínica'};
+const LABS=[['Hemograma completo',25,'sem jejum'],['Glicemia de jejum',12,'jejum de 8 h'],['Perfil lipídico',45,'jejum de 12 h'],['Hemoglobina glicada',30,'sem jejum'],['TSH e T4 livre',55,'sem jejum'],['Ureia e creatinina',22,'jejum de 4 h'],['TGO e TGP',28,'jejum de 8 h'],['Vitamina D',65,'sem jejum'],['Ferritina',35,'jejum de 4 h'],['Urina tipo 1',15,'primeiro jato da manhã']],LS=['07:00','08:00','09:00','10:00','11:00','14:00','16:00'];
+const SLOTS=['09:00','10:30','14:00','15:30','17:00'];
+let V={an:{sel:[],mode:'loja',addr:'',date:'',time:''},tab:'inicio',scr:'inicio',ped:{cat:'',q:''},age:'Farmácia Clínica',meds:'Uso Contínuo',ex:'Exames',lem:'Hoje',rx:''};
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._);t._=setTimeout(()=>t.classList.remove('show'),2400)};
+const notify=m=>{S.notifs.unshift({id:uid(),m,ts:Date.now(),r:0});save()};
+const modal=h=>{close();const o=document.createElement('div');o.className='ov';o.id='ov';o.onclick=e=>{if(e.target==o)close()};o.innerHTML='<div class="sheet" role="dialog">'+h+'</div>';$('#app').append(o)};
+const close=()=>{const o=$('#ov');o&&o.remove()};
+const nav=(s,t)=>{V.scr=s;V.tab=t||V.tab;render()};
+const head=(t,b)=>`<div class="top">${b?`<button class="back" aria-label="Voltar" onclick="nav('${b}')">‹</button>`:''}<h1>${t}</h1></div>`;
+const tabs=(k,arr)=>`<div class="tabs">${arr.map(a=>`<button class="tab ${V[k]==a?'on':''}" onclick="V['${k}']='${a}';render()">${a}</button>`).join('')}</div>`;
+const cartN=()=>S.cart.reduce((a,c)=>a+c.q,0),unread=()=>S.notifs.filter(n=>!n.r).length;
+const prodPrice=n=>(PROD.find(p=>p[0]==n)||[0,0,0])[2];
+function orderStatus(o){const m=(Date.now()-o.ts)/6e4;return m<1?'Em preparo':m<3?(o.mode=='entrega'?'A caminho':'Pronto p/ retirada'):'Entregue'}
+const NAV=[['inicio','🏠','Início'],['pedidos','🛒','Pedidos'],['consultas','📅','Consultas'],['notif','🔔','Notificações'],['perfil','👤','Perfil']];
+const SCR={
+inicio(){const T=[['🛒','Encomendar Medicamentos','pedidos'],['💊','Meus Medicamentos','meds'],['📅','Agendar Consultas','consultas'],['📄','Meus Laudos e Exames','ex'],['🩺','Farmácia Clínica','consultas'],['🔬','Análises Clínicas','an'],['⚗️','Manipulação','man'],['🌿','Fitoterapia','fito'],['💆','Estética','est'],['💓','Acompanhamento Terapêutico','meds'],['⏰','Lembretes do Dia','lem'],['⋯','Mais Serviços','mais']];
+return `<button class="back" style="float:right" aria-label="Fechar aplicativo" onclick="askClose()">✕</button><h1 style="font-size:22px">Olá, ${esc(S.name)}!</h1><p class="sub" style="font-size:13px;letter-spacing:0">Cuidar de você é o nosso propósito!</p>
+<div style="text-align:center;margin:16px 0 0"><div class="brand">Farma <span style="color:#7aa84a">&amp;</span> <i>Vida</i></div><div class="sub">SAÚDE EM TODAS AS FASES DA VIDA</div></div>
+<label class="search">🔍<input id="q" placeholder="O que você precisa hoje?" oninput="busca(this.value)"></label><div id="res"></div>
+<div class="grid">${T.map(t=>`<button class="tile" onclick="tile('${t[2]}')"><b>${t[0]}</b>${t[1]}</button>`).join('')}</div>
+<div class="banner"><div style="flex:1"><h2>Cuidado completo para você e sua família</h2><div class="sub" style="margin-top:6px">💚 Saúde · Bem-estar · Qualidade de vida</div></div><span style="font-size:44px">👩‍⚕️</span></div>`},
+pedidos(){const p=V.ped,L=PROD.filter(x=>(!p.cat||x[1]==p.cat)&&x[0].toLowerCase().includes(p.q.toLowerCase()));
+const ords=S.orders.slice(0,3);
+return `<div class="top"><h1>Encomendar Medicamentos</h1><button class="tab on" onclick="nav('cart')">🛒 ${cartN()}</button></div>
+<label class="search" style="margin-top:6px">🔍<input placeholder="Digite o nome do medicamento" value="${esc(p.q)}" oninput="V.ped.q=this.value;list()"></label>
+<div class="tabs"><button class="tab ${p.cat?'':'on'}" onclick="V.ped.cat='';render()">Todos</button>${CAT.map(c=>`<button class="tab ${p.cat==c[0]?'on':''}" onclick="V.ped.cat='${c[0]}';render()">${c[1]} ${c[0]}</button>`).join('')}</div>
+<div id="plist">${plist(L)}</div>
+<h3>Envie sua Receita</h3><label class="empty" style="display:block">${V.rx?'📎 '+esc(V.rx):'📷 Tire uma foto ou envie sua receita<br><small>Formatos: JPG, PNG ou PDF</small>'}<input type="file" accept="image/*,.pdf" hidden onchange="V.rx=this.files[0]?.name||'';if(V.rx)toast('Receita anexada');render()"></label>
+<h3>Meus últimos pedidos <button onclick="nav('orders')">Ver todos</button></h3>${ords.length?ords.map(oc).join(''):'<div class="empty">Nenhum pedido ainda.</div>'}`},
+cart(){const rx=S.cart.some(c=>PROD.find(p=>p[0]==c.id)?.[3]);const tot=S.cart.reduce((a,c)=>a+c.q*prodPrice(c.id),0);
+return head('Meu pedido','pedidos')+(S.cart.length?S.cart.map(c=>`<div class="card"><span class="ic">💊</span><div class="t"><b>${esc(c.id)}</b><small>${R(prodPrice(c.id))}</small></div><div class="q"><button onclick="qty('${esc(c.id)}',-1)">−</button><b>${c.q}</b><button onclick="qty('${esc(c.id)}',1)">+</button></div></div>`).join('')+
+`<h3>Recebimento</h3><div class="form"><select id="mode"><option value="entrega">Entrega (R$ 6,00)</option><option value="retirada">Retirar na farmácia (grátis)</option></select></div>${rx&&!V.rx?'<p class="sub" style="margin-top:8px;color:var(--red)">Itens controlados exigem receita. Anexe na tela de pedidos.</p>':''}
+<h3>Subtotal <b>${R(tot)}</b></h3><button class="btn" ${rx&&!V.rx?'disabled':''} onclick="checkout()">Ir para pagamento</button>`:'<div class="empty">Seu pedido está vazio.</div>'+'<button class="btn" onclick="nav(\'pedidos\')">Escolher medicamentos</button>')},
+orders(){return head('Meus pedidos','pedidos')+(S.orders.length?S.orders.map(oc).join(''):'<div class="empty">Nenhum pedido ainda.</div>')},
+consultas(){const L=SVC.filter(l=>l[3]==V.age);const up=S.appts.filter(a=>a.date+a.time>=ymd(new Date())).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+return head('Agendar Consulta')+tabs('age',['Farmácia Clínica','Estética','Fitoterapia'])+L.map(l=>`<button class="card" onclick="agendar('${l[1]}')"><span class="ic">${l[0]}</span><div class="t"><b>${l[1]}</b><small>${l[2]}</small></div>›</button>`).join('')+
+`<h3>Minhas consultas</h3>${up.length?up.map(a=>`<div class="card"><span class="ic">📅</span><div class="t"><b>${esc(a.svc)}</b><small>${br(a.date)} às ${a.time}</small></div><div style="display:flex;flex-direction:column;gap:6px"><button class="pill ok" onclick="reagendar('${a.id}')">Reagendar</button><button class="pill" onclick="verRecibo('${a.id}')">Recibo</button><button class="pill x" onclick="cancelAppt('${a.id}')">Cancelar</button></div></div>`).join(''):'<div class="empty">Nenhuma consulta marcada.</div>'}`},
+meds(){const t=V.meds,ls=t=='Histórico'?S.hist:S.meds;
+return head('Meus Medicamentos','inicio')+tabs('meds',['Uso Contínuo','Lembretes','Histórico'])+(ls.length?ls.map(m=>`<div class="card"><span class="ic">${m.i}</span><div class="t"><b>${esc(m.n)}</b><small>${esc(m.d)} · ${m.t.length}x ao dia<br>${m.t.join(' | ')}</small></div>${t=='Histórico'?`<button class="pill" onclick="reativar('${m.id}')">Reativar</button>`:t=='Lembretes'?`<button class="sw ${m.on?'on':''}" aria-label="Lembrete" onclick="tgl('${m.id}')"></button>`:`<button class="pill" onclick="editMed('${m.id}')">Editar</button>`}</div>`).join(''):'<div class="empty">Nada por aqui.</div>')+(t=='Histórico'?'':'<button class="btn" onclick="editMed()">＋ Adicionar medicamento</button>')},
+ex(){return head('Meus Laudos e Exames','inicio')+tabs('ex',['Exames','Laudos','Histórico'])+(S.exams.length?S.exams.map(e=>`<div class="card"><span class="ic">📄</span><div class="t"><b>${esc(e.n)}</b><small>${br(e.date)}</small></div><div style="display:flex;flex-direction:column;gap:6px"><button class="pill" onclick="verLaudo('${e.id}')">Ver laudo</button><button class="pill ok" onclick="printLaudo('${e.id}')">🖨 Imprimir</button></div></div>`).join(''):'<div class="empty">Nenhum exame salvo.</div>')+'<button class="btn" onclick="nav(\'analises\',\'inicio\')">Marcar exames</button><button class="btn o" onclick="addExame()">Enviar novo laudo</button><p class="sub" style="text-align:center;margin-top:8px">Seus exames ficam salvos e organizados aqui.</p>'},
+lem(){const hoje=ymd(new Date()),lg=S.log[hoje]||{};const it=[];S.meds.filter(m=>m.on).forEach(m=>m.t.forEach(h=>it.push({k:m.id+'@'+h,h,n:m.n,d:m.d,i:m.i})));S.custom.forEach(c=>it.push({k:c.id,h:c.t,n:c.n,d:c.d,i:c.i,c:1}));it.sort((a,b)=>a.h.localeCompare(b.h));
+let body;if(V.lem=='Hoje')body=it.map(l=>`<div class="card"><b style="width:48px">${l.h}</b><span class="ic">${l.i}</span><div class="t"><b>${esc(l.n)}</b><small>${esc(l.d)}</small></div><button class="chk ${lg[l.k]?'on':''}" aria-label="Concluir" onclick="done('${l.k}')">${lg[l.k]?'✓':''}</button></div>`).join('')+'<button class="btn o" onclick="addLem()">＋ Novo lembrete</button>';
+else{const n=V.lem=='Semana'?7:30,days=[...Array(n)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-(n-1-i));return ymd(d)}),c=days.map(d=>Object.keys(S.log[d]||{}).length),mx=Math.max(1,...c);
+body=`<div class="card" style="display:block"><b>${c.reduce((a,b)=>a+b,0)} lembretes concluídos</b><div class="bar">${c.map(x=>`<div style="height:${x/mx*100}%"></div>`).join('')}</div><small class="sub">Últimos ${n} dias</small></div>`}
+return head('Lembretes do Dia','inicio')+tabs('lem',['Hoje','Semana','Mês'])+body},
+notif(){return head('Notificações')+(S.notifs.length?S.notifs.map(n=>`<div class="card" onclick="readN('${n.id}')"><span class="ic">${n.r?'🔕':'🔔'}</span><div class="t"><b style="font-weight:${n.r?500:700}">${esc(n.m)}</b><small>${new Date(n.ts).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}</small></div></div>`).join('')+'<button class="btn o" onclick="S.notifs=[];save();render()">Limpar tudo</button>':'<div class="empty">Sem notificações.</div>')},
+perfil(){return head('Perfil')+`<div class="card"><span class="ic">👤</span><div class="t"><small>Paciente</small><b style="font-size:17px">${esc(S.name)}</b></div><button class="pill ok" onclick="editName()">Alterar nome</button></div>
+<div class="card" style="margin-top:12px"><div class="t"><b>Tema escuro</b></div><button class="sw ${S.theme=='dark'?'on':''}" aria-label="Tema" onclick="S.theme=S.theme=='dark'?'light':'dark';theme();save();render()"></button></div>
+<button class="card" onclick="nav('orders')"><span class="ic">📦</span><div class="t"><b>Meus pedidos</b></div>›</button>
+<button class="card" onclick="installApp()"><span class="ic">📲</span><div class="t"><b>${isApp()?'Aplicativo instalado':'Instalar aplicativo'}</b><small>Abre em tela cheia, como um app</small></div>›</button>
+<button class="card" onclick="chat()"><span class="ic">💬</span><div class="t"><b>Suporte no aplicativo</b><small>Fale com nossa equipe</small></div>›</button>
+<button class="btn" style="background:var(--red)" onclick="askClose()">✕ Fechar aplicativo</button><button class="btn o" onclick="if(confirm('Apagar todos os dados?')){S=structuredClone(DEF);save();theme();nav('inicio','inicio');welcome()}">Restaurar dados de exemplo</button>`}};
+SCR.pay=()=>{const p=V.pay;if(!p)return SCR.inicio();const m=p.m||'pix',o=p.kind=='order';
+const sum=o?`<div class="l"><span>Subtotal</span><b>${R(p.sub)}</b></div><div class="l"><span>${p.mode=='entrega'?'Entrega':'Retirada'}</span><b>${R(p.frete)}</b></div>`:(p.kind=='lab'?p.items.map(i=>`<div class="l"><span>${esc(i)}</span></div>`).join('')+`<div class="l"><span>Coleta ${p.mode=='casa'?'em casa (+R$ 20,00)':'na farmácia'}</span></div>`:`<div class="l"><span>${esc(p.svc)}</span></div>`)+`<div class="l"><span>${br(p.date)} às ${p.time}</span></div>`;
+const body=m=='pix'?`<div class="empty" style="margin-top:10px">Pague com o código Pix copia e cola<br><b style="word-break:break-all;color:var(--tx)">00020126FARMAVIDA${Math.round(p.total*100)}5204000053039865802BR</b><br><button class="pill ok" style="margin-top:8px" onclick="try{navigator.clipboard.writeText('00020126FARMAVIDA${Math.round(p.total*100)}')}catch(e){};toast('Código copiado')">Copiar código</button></div>`
+:m=='card'?`<div class="form" style="margin-top:10px"><input id="cn" inputmode="numeric" placeholder="Número do cartão" maxlength="23"><input id="cnm" placeholder="Nome impresso no cartão"><div style="display:flex;gap:8px"><input id="cv" placeholder="MM/AA" maxlength="5"><input id="cc" inputmode="numeric" placeholder="CVV" maxlength="4"></div><select id="ci">${[1,2,3].map(n=>`<option value="${n}">${n}x de ${R(p.total/n)} sem juros</option>`).join('')}</select></div>`
+:m=='clinic'?`<div class="empty" style="margin-top:10px">${p.kind=='lab'&&p.mode=='casa'?'Pague ao profissional no momento da coleta em casa.':p.kind=='lab'?'Pague na clínica no dia da coleta.':'Pague na clínica no dia da consulta.'}<br>Aceitamos Pix, cartão e dinheiro. Seu horário fica reservado.</div>`:`<div class="empty" style="margin-top:10px">${o?(p.mode=='entrega'?'Pague em dinheiro ao receber o pedido.':'Pague em dinheiro ao retirar na farmácia.'):p.kind=='lab'?'Pague em dinheiro no dia da coleta.':'Pague em dinheiro na clínica, no dia da consulta.'}</div>`;
+return head('Pagamento',o?'cart':p.kind=='lab'?'analises':'consultas')+`<div class="card" style="display:block"><b>${esc(p.desc)}</b>${sum}<div class="l" style="display:flex;justify-content:space-between;margin-top:6px;font-size:18px"><span>Total</span><b>${R(p.total)}</b></div></div>
+<div class="tabs">${(o?['pix','card','cash']:['pix','card','clinic']).map(k=>`<button class="tab ${m==k?'on':''}" onclick="V.pay.m='${k}';render()">${MT[k]}</button>`).join('')}</div>${body}<button class="btn" onclick="confirmPay()">${m=='clinic'?'Confirmar agendamento':'Confirmar pagamento'} · ${R(p.total)}</button>`};
+SCR.nota=()=>{const k=V.rec;if(!k)return SCR.inicio();if(k.k=='l')return notaLab(k.id);const o=k.k=='o',x=o?S.orders.find(a=>a.id==k.id):S.appts.find(a=>a.id==k.id);if(!x)return SCR.inicio();
+const py=x.pay||{method:'cash',status:'Pendente',paidAt:x.ts||Date.now(),proto:x.id.toUpperCase()},fr=x.frete??(x.mode=='entrega'?6:0),tot=o?x.total:(x.price||PR[x.svc]||80);
+const met=MT[py.method]+(py.last4?` •••• ${py.last4} em ${py.inst}x`:'');
+const rows=o?x.items.map(i=>`<div class="l"><span>${i[1]}x ${esc(i[0])}</span><span>${R(i[1]*prodPrice(i[0]))}</span></div>`).join('')+`<hr><div class="l"><span>Subtotal</span><span>${R(tot-fr)}</span></div><div class="l"><span>${x.mode=='entrega'?'Entrega':'Retirada'}</span><span>${R(fr)}</span></div>`:`<div class="l"><span>Serviço</span><span>${esc(x.svc)}</span></div><div class="l"><span>Data</span><span>${br(x.date)} às ${x.time}</span></div><div class="l"><span>Paciente</span><span>${esc(S.name)}</span></div>`;
+return head(o?'Nota da compra':'Recibo da consulta',o?'orders':'consultas')+`<div class="nota" id="nota"><h2>Farma &amp; Vida</h2><p class="sub" style="text-align:center">Saúde em todas as fases da vida</p><hr>
+<div class="l"><span>${o?'Nota nº':'Recibo nº'}</span><b>${py.proto}</b></div><div class="l"><span>Emitido em</span><span>${new Date(py.paidAt).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}</span></div><hr>${rows}<hr>
+<div class="l" style="font-size:18px"><b>Total</b><b>${R(tot)}</b></div><div class="l"><span>Pagamento</span><span>${met}</span></div><div class="l"><span>Situação</span><b style="color:${py.status=='Pago'?'var(--g)':'var(--red)'}">${py.status=='Pago'?'Pago':'Pagar '+(o?'na '+(x.mode=='entrega'?'entrega':'retirada'):'na clínica')}</b></div></div>
+<button class="btn noprint" onclick="try{window.print()}catch(e){toast('Impressão indisponível')}">Imprimir / salvar PDF</button><button class="btn o noprint" onclick="copiaNota()">Copiar nota</button><button class="btn o noprint" onclick="nav('inicio','inicio')">Voltar ao início</button>`};
+function notaLab(id){const x=S.labs.find(a=>a.id==id);if(!x)return SCR.inicio();const py=x.pay,met=MT[py.method]+(py.last4?` •••• ${py.last4} em ${py.inst}x`:'');
+return head('Recibo de exames','analises')+`<div class="nota" id="nota"><h2>Farma &amp; Vida</h2><p class="sub" style="text-align:center">Análises Clínicas</p><hr>
+<div class="l"><span>Recibo nº</span><b>${py.proto}</b></div><div class="l"><span>Emitido em</span><span>${new Date(py.paidAt).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}</span></div><div class="l"><span>Paciente</span><span>${esc(S.name)}</span></div><hr>
+${x.items.map(n=>`<div class="l"><span>${esc(n)}</span><span>${R((LABS.find(l=>l[0]==n)||[0,0])[1])}</span></div>`).join('')}<div class="l"><span>Coleta ${x.mode=='casa'?'em casa':'na farmácia'}</span><span>${x.mode=='casa'?R(20):R(0)}</span></div>${x.mode=='casa'?`<div class="l"><span>Endereço</span><span>${esc(x.addr)}</span></div>`:''}<div class="l"><span>Data</span><span>${br(x.date)} às ${x.time}</span></div><hr>
+<div class="l" style="font-size:18px"><b>Total</b><b>${R(x.total)}</b></div><div class="l"><span>Pagamento</span><span>${met}</span></div><div class="l"><span>Situação</span><b style="color:${py.status=='Pago'?'var(--g)':'var(--red)'}">${py.status=='Pago'?'Pago':x.mode=='casa'?'Pagar no momento da coleta':'Pagar na clínica'}</b></div></div>
+<button class="btn noprint" onclick="try{window.print()}catch(e){toast('Impressão indisponível')}">Imprimir / salvar PDF</button><button class="btn o noprint" onclick="copiaNota()">Copiar recibo</button><button class="btn o noprint" onclick="nav('analises','inicio')">Voltar</button>`}
+SCR.analises=()=>{const a=V.an;if(!a.date)a.date=ymd(new Date());const now=new Date(),hm=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'),days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return d});
+const tot=a.sel.reduce((t,n)=>t+LABS.find(l=>l[0]==n)[1],0)+(a.mode=='casa'?20:0),ok=a.sel.length&&a.time&&(a.mode!='casa'||a.addr.trim());
+const mine=S.labs.slice().sort((x,y)=>(x.date+x.time).localeCompare(y.date+y.time));
+return head('Análises Clínicas','inicio')+`<p class="sub" style="margin-bottom:8px">Marque os exames, escolha onde e quando coletar.</p>`+LABS.map((l,i)=>{const on=a.sel.includes(l[0]);return `<button class="card" onclick="selLab(${i})"><span class="chk ${on?'on':''}">${on?'✓':''}</span><div class="t"><b>${l[0]}</b><small>${l[2]} · ${R(l[1])}</small></div></button>`}).join('')+
+`<h3>Local da coleta</h3><div class="tabs"><button class="tab ${a.mode=='loja'?'on':''}" onclick="V.an.mode='loja';render()">Na farmácia (grátis)</button><button class="tab ${a.mode=='casa'?'on':''}" onclick="V.an.mode='casa';render()">Em casa (+R$ 20,00)</button></div>${a.mode=='casa'?`<div class="form"><input placeholder="Endereço completo" value="${esc(a.addr)}" oninput="V.an.addr=this.value"></div>`:''}
+<h3>Dia e horário</h3><div class="tabs">${days.map(d=>`<button class="tab ${ymd(d)==a.date?'on':''}" onclick="V.an.date='${ymd(d)}';V.an.time='';render()">${d.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit'})}</button>`).join('')}</div>
+<div class="slots">${LS.map(h=>{const off=S.labs.some(l=>l.date==a.date&&l.time==h)||(a.date==ymd(now)&&h<=hm);return `<button class="tab ${a.time==h?'on':''}" ${off?'disabled style="opacity:.4"':''} onclick="V.an.time='${h}';render()">${h}</button>`}).join('')}</div>
+<button class="btn" ${ok?'':'disabled'} onclick="payLab()">Ir para pagamento · ${R(tot)}</button>
+<h3>Meus exames agendados</h3>${mine.length?mine.map(l=>`<div class="card"><span class="ic">🔬</span><div class="t"><b>${esc(l.items.join(', '))}</b><small>${br(l.date)} às ${l.time} · ${l.mode=='casa'?'Em casa':'Na farmácia'}</small></div>${l.res?`<button class="pill ok" onclick="nav('ex','inicio')">Ver laudo</button>`:`<div style="display:flex;flex-direction:column;gap:6px"><button class="pill ok" onclick="reagLab('${l.id}')">Reagendar</button><button class="pill x" onclick="cancelLab('${l.id}')">Cancelar</button></div>`}<button class="pill" onclick="V.rec={k:'l',id:'${l.id}'};nav('nota','inicio')">Recibo</button></div>`).join(''):'<div class="empty">Nenhum exame marcado.</div>'}
+<button class="btn o" onclick="nav('ex','inicio')">Ver meus laudos</button>`};
+function selLab(i){const n=LABS[i][0],a=V.an.sel;V.an.sel=a.includes(n)?a.filter(x=>x!=n):[...a,n];render()}
+function payLab(){const a=V.an,tot=a.sel.reduce((t,n)=>t+LABS.find(l=>l[0]==n)[1],0)+(a.mode=='casa'?20:0);V.pay={kind:'lab',items:[...a.sel],mode:a.mode,addr:a.addr.trim(),date:a.date,time:a.time,total:tot,desc:'Exames laboratoriais',m:'pix'};nav('pay','inicio')}
+function reagLab(id,dsel){const l=S.labs.find(x=>x.id==id),now=new Date(),hm=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');dsel=dsel||l.date;const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return d});
+modal(`<h2>Reagendar coleta</h2><div class="tabs">${days.map(d=>`<button class="tab ${ymd(d)==dsel?'on':''}" onclick="reagLab('${id}','${ymd(d)}')">${d.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit'})}</button>`).join('')}</div><div class="slots">${LS.map(h=>{const off=S.labs.some(x=>x.id!=id&&x.date==dsel&&x.time==h)||(dsel==ymd(now)&&h<=hm);return `<button class="tab ${l.date==dsel&&l.time==h?'on':''}" ${off?'disabled style="opacity:.4"':''} onclick="setLab('${id}','${dsel}','${h}')">${h}</button>`}).join('')}</div>`)}
+function setLab(id,d,h){const l=S.labs.find(x=>x.id==id);l.date=d;l.time=h;notify(`Coleta reagendada para ${br(d)} às ${h}`);save();close();toast('Coleta reagendada!');render()}
+function cancelLab(id){const l=S.labs.find(x=>x.id==id);modal(`<h2>Cancelar exames?</h2><p style="margin-bottom:8px">${esc(l.items.join(', '))} · ${br(l.date)} às ${l.time}</p><button class="btn" style="background:var(--red)" onclick="S.labs=S.labs.filter(x=>x.id!='${id}');notify('Coleta cancelada');save();close();toast('Coleta cancelada');render()">Sim, cancelar</button><button class="btn o" onclick="reagLab('${id}')">Reagendar em vez disso</button><button class="btn o" onclick="close()">Manter</button>`)}
+const RES={'hemograma completo':[['Hemoglobina',13.8,'g/dL',12,16],['Hematócrito',41.2,'%',36,46],['Leucócitos',6800,'/mm³',4000,10000],['Plaquetas',245000,'/mm³',150000,450000]],'glicemia':[['Glicose em jejum',92,'mg/dL',70,99]],'glicemia de jejum':[['Glicose em jejum',92,'mg/dL',70,99]],'perfil lipídico':[['Colesterol total',185,'mg/dL',0,190],['HDL',52,'mg/dL',40,999],['LDL',108,'mg/dL',0,130],['Triglicerídeos',128,'mg/dL',0,150]],'função tireoidiana':[['TSH',2.1,'µUI/mL',0.4,4.5],['T4 livre',1.1,'ng/dL',0.8,1.8]],'tsh e t4 livre':[['TSH',2.1,'µUI/mL',0.4,4.5],['T4 livre',1.1,'ng/dL',0.8,1.8]],'hemoglobina glicada':[['HbA1c',5.6,'%',4,5.7]],'ureia e creatinina':[['Ureia',32,'mg/dL',15,45],['Creatinina',0.9,'mg/dL',0.6,1.2]],'tgo e tgp':[['TGO (AST)',24,'U/L',0,40],['TGP (ALT)',28,'U/L',0,41]],'vitamina d':[['25-OH vitamina D',27,'ng/mL',30,100]],'ferritina':[['Ferritina',88,'ng/mL',15,150]],'urina tipo 1':[['pH',6,'',5,8],['Densidade',1020,'',1005,1030]]};
+const fmt=v=>v.toLocaleString('pt-BR'),refT=x=>x[3]<=0?'até '+fmt(x[4]):x[4]>=999?'acima de '+fmt(x[3]):fmt(x[3])+' a '+fmt(x[4]);
+SCR.laudo=()=>{const e=S.exams.find(x=>x.id==V.lau);if(!e)return SCR.ex();const rows=RES[e.n.toLowerCase()],mat=/urina/i.test(e.n)?'Urina':'Sangue',out=rows?rows.filter(x=>x[1]<x[3]||x[1]>x[4]).length:0;
+return head('Laudo','ex')+`<div class="paper" id="nota"><div class="hd"><div><div class="brand" style="font-size:24px">Farma <span style="color:#7aa84a">&amp;</span> <i>Vida</i></div><div class="sub">ANÁLISES CLÍNICAS</div></div><small>Laudo nº ${e.id.slice(0,6).toUpperCase()}<br>Liberado em ${br(e.date)}</small></div>
+<div class="pg"><div><small>Paciente</small><b>${esc(S.name)}</b></div><div><small>Convênio</small>Particular</div><div><small>Data da coleta</small>${br(e.date)}</div><div><small>Material</small>${mat}</div></div>
+<h2 style="font-size:18px;margin:6px 0 8px">${esc(e.n)}</h2>
+${rows?`<div class="rw h"><span>Parâmetro</span><span>Resultado</span><span>Unidade</span><span>Referência</span></div>`+rows.map(x=>{const f=x[1]<x[3]?'▼':x[1]>x[4]?'▲':'';return `<div class="rw"><span>${x[0]}</span><b style="${f?'color:var(--red)':''}">${fmt(x[1])} ${f}</b><span>${x[2]}</span><span>${refT(x)}</span></div>`}).join('')+`<p style="font-size:12px;margin-top:10px;color:${out?'var(--red)':'var(--g)'}"><b>${out?out+' valor(es) fora da referência (▲ alto, ▼ baixo).':'Todos os valores dentro da referência.'}</b></p>`:`<p style="font-size:13px;margin:8px 0">${esc(e.r)}</p>`}
+<p style="font-size:11px;color:var(--mut);margin-top:12px">Os resultados devem ser interpretados em conjunto com a avaliação clínica. Valores de referência podem variar conforme idade, sexo e metodologia.</p>
+<div class="sig"><i></i><b>Dra. Helena Duarte</b><br>Farmacêutica Bioquímica · CRF 00000</div>
+<p style="font-size:10px;color:var(--mut);text-align:center;margin-top:14px">Documento eletrônico de demonstração · Farma &amp; Vida</p></div>
+<button class="btn noprint" onclick="try{window.print()}catch(x){toast('Impressão indisponível')}">🖨 Imprimir / salvar PDF</button><button class="btn o noprint" onclick="copiaNota()">Copiar laudo</button><button class="btn o noprint" style="color:var(--red);border-color:var(--red)" onclick="delLaudo('${e.id}')">Excluir laudo</button>`};
+function welcome(){const o=document.createElement('div');o.className='ov';o.id='ov';o.style.alignItems='center';
+o.innerHTML=`<div class="sheet" style="border-radius:20px;margin:16px;width:auto;text-align:center" role="dialog" aria-label="Boas-vindas"><div class="brand">Farma <span style="color:#7aa84a">&amp;</span> <i>Vida</i></div><div class="sub" style="margin-bottom:16px">SAÚDE EM TODAS AS FASES DA VIDA</div><h2 style="font-size:20px">Bem-vindo(a)!</h2><p style="color:var(--mut);margin:6px 0 12px">Qual é o nome do paciente?</p><div class="form"><input id="wn" placeholder="Nome completo" autocomplete="name" onkeydown="if(event.key=='Enter')saveWelcome()"></div><button class="btn" onclick="saveWelcome()">Continuar</button></div>`;
+$('#app').append(o);setTimeout(()=>$('#wn')&&$('#wn').focus(),100)}
+function saveWelcome(){const n=$('#wn').value.trim();if(n.length<2)return toast('Digite o nome do paciente');S.name=n;S.setup=1;S.notifs=S.notifs.filter(x=>x.id!='n0');notify('Dica: cadastre seus medicamentos e ative os lembretes para não esquecer nenhuma dose.');notify(`Olá, ${n}! Bem-vindo(a) ao Farma & Vida. Cuidar de você é o nosso propósito.`);close();render();toast('Olá, '+n+'!')}
+function editName(){modal(`<h2>Alterar nome</h2><div class="form"><input id="en2" value="${esc(S.name)}" placeholder="Nome do paciente" onkeydown="if(event.key=='Enter')saveName()"></div><button class="btn" onclick="saveName()">Salvar</button><button class="btn o" onclick="close()">Cancelar</button>`);setTimeout(()=>$('#en2')&&$('#en2').focus(),100)}
+function saveName(){const n=$('#en2').value.trim();if(n.length<2)return toast('Digite o nome do paciente');S.name=n;save();close();toast('Nome atualizado');render()}
+const oc=o=>{const s=orderStatus(o);return `<button class="card" onclick="verNota('${o.id}')"><span class="ic">📦</span><div class="t"><b>${esc(o.items.map(i=>i[1]+'x '+i[0]).join(', '))}</b><small>${new Date(o.ts).toLocaleDateString('pt-BR')} · ${R(o.total)}</small></div><span class="pill ${s=='Entregue'?'ok':''}">${s}</span></button>`};
+const plist=L=>L.length?L.map(p=>`<div class="card"><span class="ic">${CAT.find(c=>c[0]==p[1])[1]}</span><div class="t"><b>${p[0]}</b><small>${p[1]}${p[3]?' · exige receita':''} · ${R(p[2])}</small></div><button class="pill ok" onclick="add('${p[0]}')">Adicionar</button></div>`).join(''):'<div class="empty">Nenhum produto encontrado.</div>';
+function list(){$('#plist').innerHTML=plist(PROD.filter(x=>(!V.ped.cat||x[1]==V.ped.cat)&&x[0].toLowerCase().includes(V.ped.q.toLowerCase())))}
+function syncLabs(){S.labs.forEach(l=>{if(!l.res&&new Date(l.date+'T'+l.time)<new Date()){l.res=1;l.items.forEach(n=>S.exams.unshift({id:uid(),n,date:l.date,r:'Resultado liberado: valores dentro da referência (exemplo).'}));notify('Resultados disponíveis: '+l.items.join(', '))}})}
+function render(){syncLabs();const s=SCR[V.scr]?V.scr:'inicio';$('#v').innerHTML=SCR[s]();const u=unread();
+$('#nav').innerHTML=NAV.map(x=>`<button class="${x[0]==V.tab?'on':''}" onclick="nav('${x[0]}','${x[0]}')"><b>${x[1]}</b>${x[2]}${x[0]=='notif'&&u?`<i>${u}</i>`:''}${x[0]=='pedidos'&&cartN()?`<i>${cartN()}</i>`:''}</button>`).join('')}
+function theme(){const d=document.documentElement;S.theme?d.dataset.theme=S.theme:delete d.dataset.theme}
+function tile(k){const m={pedidos:['pedidos','pedidos'],meds:['meds','inicio'],consultas:['consultas','consultas'],ex:['ex','inicio'],lem:['lem','inicio'],an:['analises','inicio']};
+if(k=='man'){V.ped.cat='Manipulados';return nav('pedidos','pedidos')}if(k=='fito'){V.age='Fitoterapia';return nav('consultas','consultas')}if(k=='est'){V.age='Estética';return nav('consultas','consultas')}
+if(k=='mais')return modal(`<h2>Mais serviços</h2><button class="card" onclick="close();nav('orders','pedidos')"><span class="ic">📦</span><b>Meus pedidos</b></button><button class="card" onclick="close();nav('cart','pedidos')"><span class="ic">🛒</span><b>Meu carrinho (${cartN()})</b></button><button class="card" onclick="close();chat()"><span class="ic">💬</span><b>Suporte no aplicativo</b></button>`);
+nav(...m[k])}
+function busca(v){const r=v?PROD.filter(p=>p[0].toLowerCase().includes(v.toLowerCase())).slice(0,5):[];$('#res').innerHTML=r.map(p=>`<div class="card"><span class="ic">💊</span><div class="t"><b>${p[0]}</b><small>${R(p[2])}</small></div><button class="pill ok" onclick="add('${p[0]}')">Adicionar</button></div>`).join('')}
+function add(n){const c=S.cart.find(x=>x.id==n);c?c.q++:S.cart.push({id:n,q:1});save();toast(n+' adicionado ao pedido');const q=$('#q');q?render():render()}
+function qty(n,d){const c=S.cart.find(x=>x.id==n);c.q+=d;if(c.q<1)S.cart=S.cart.filter(x=>x!=c);save();render()}
+function verNota(id){V.rec={k:'o',id};nav('nota','pedidos')}
+function verRecibo(id){V.rec={k:'a',id};nav('nota','consultas')}
+function copiaNota(){try{navigator.clipboard.writeText($('#nota').innerText);toast('Nota copiada')}catch(e){toast('Não foi possível copiar')}}
+function confirmPay(){const p=V.pay,m=p.m||'pix',info={method:m,paidAt:Date.now(),status:m=='cash'||m=='clinic'?'Pendente':'Pago',proto:String(Date.now()).slice(-8)};
+if(m=='card'){const n=$('#cn').value.replace(/\D/g,'');if(n.length<13||!$('#cnm').value.trim()||!/^\d\d\/\d\d$/.test($('#cv').value)||$('#cc').value.replace(/\D/g,'').length<3)return toast('Confira os dados do cartão');info.last4=n.slice(-4);info.inst=$('#ci').value}
+const id=uid();if(p.kind=='order'){S.orders.unshift({id,items:S.cart.map(c=>[c.id,c.q]),total:p.total,sub:p.sub,frete:p.frete,ts:Date.now(),mode:p.mode,pay:info});S.cart=[];V.rx='';notify('Pedido confirmado! Total '+R(p.total))}
+else if(p.kind=='lab'){S.labs.push({id,items:p.items,mode:p.mode,addr:p.addr,date:p.date,time:p.time,total:p.total,pay:info,res:0});V.an.sel=[];V.an.time='';notify(`Exames agendados para ${br(p.date)} às ${p.time}`)}
+else{S.appts.push({id,svc:p.svc,date:p.date,time:p.time,price:p.total,pay:info});notify(`Consulta confirmada: ${p.svc}, ${br(p.date)} às ${p.time}`)}
+V.rec={k:p.kind=='order'?'o':p.kind=='lab'?'l':'a',id};const t=p.kind=='order'?'pedidos':p.kind=='lab'?'inicio':'consultas';V.pay=null;save();toast(m=='cash'||m=='clinic'?'Agendamento confirmado!':'Pagamento confirmado!');nav('nota',t)}
+function checkout(){const mode=$('#mode').value,sub=S.cart.reduce((a,c)=>a+c.q*prodPrice(c.id),0),frete=mode=='entrega'?6:0;V.pay={kind:'order',mode,sub,frete,total:sub+frete,desc:'Pedido de medicamentos',m:'pix'};nav('pay','pedidos')}
+function checkoutOld(){const mode=$('#mode').value,sub=S.cart.reduce((a,c)=>a+c.q*prodPrice(c.id),0),total=sub+(mode=='entrega'?6:0);
+S.orders.unshift({id:uid(),items:S.cart.map(c=>[c.id,c.q]),total,ts:Date.now(),mode});S.cart=[];V.rx='';notify('Pedido confirmado! Total '+R(total));save();toast('Pedido realizado!');nav('orders','pedidos')}
+function reagendar(id){const a=S.appts.find(x=>x.id==id);agendar(a.svc,a.date,id)}
+function agendar(svc,dsel,rid){const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return d});dsel=dsel||ymd(days[0]);const now=new Date(),hm=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+modal(`<h2>${rid?'Reagendar: ':''}${esc(svc)}</h2><div class="tabs">${days.map(d=>`<button class="tab ${ymd(d)==dsel?'on':''}" onclick="agendar('${svc}','${ymd(d)}','${rid||''}')">${d.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit'})}</button>`).join('')}</div><div class="slots">${SLOTS.map(h=>{const off=S.appts.some(a=>a.id!=rid&&a.date==dsel&&a.time==h)||(dsel==ymd(now)&&h<=hm);return `<button class="tab" ${off?'disabled style="opacity:.4"':''} onclick="confirmAppt('${svc}','${dsel}','${h}','${rid||''}')">${h}</button>`}).join('')}</div><p class="sub">Toque em um horário para confirmar.</p>`)}
+function confirmAppt(svc,date,time,rid){if(rid){const a=S.appts.find(x=>x.id==rid);a.date=date;a.time=time;notify(`Consulta reagendada: ${svc}, ${br(date)} às ${time}`);toast('Consulta reagendada!')}else{V.pay={kind:'appt',svc,date,time,total:PR[svc]||80,desc:'Consulta',m:'pix'};close();return nav('pay','consultas')}save();close();render()}
+function cancelAppt(id){const a=S.appts.find(x=>x.id==id);modal(`<h2>Cancelar consulta?</h2><p style="margin-bottom:8px">${esc(a.svc)} · ${br(a.date)} às ${a.time}</p><button class="btn" style="background:var(--red)" onclick="doCancel('${id}')">Sim, cancelar</button><button class="btn o" onclick="reagendar('${id}')">Reagendar em vez disso</button><button class="btn o" onclick="close()">Manter consulta</button>`)}
+function doCancel(id){const a=S.appts.find(x=>x.id==id);S.appts=S.appts.filter(x=>x.id!=id);notify(`Consulta cancelada: ${a.svc}, ${br(a.date)} às ${a.time}`);save();close();toast('Consulta cancelada');render()}
+function editMed(id){const m=S.meds.find(x=>x.id==id)||{n:'',d:'1 comprimido',t:['08:00']};
+modal(`<h2>${id?'Editar':'Novo'} medicamento</h2><div class="form"><input id="mn" placeholder="Nome (ex.: Losartana 50mg)" value="${esc(m.n)}"><input id="md" placeholder="Dose" value="${esc(m.d)}"><label class="sub">Horários (separe por vírgula)</label><input id="mt" value="${m.t.join(', ')}" placeholder="08:00, 20:00"></div><button class="btn" onclick="saveMed('${id||''}')">Salvar</button>${id?`<button class="btn o" onclick="finMed('${id}')">Finalizar tratamento</button><button class="btn o" style="color:var(--red);border-color:var(--red)" onclick="delMed('${id}')">Excluir</button>`:''}`)}
+function saveMed(id){const n=$('#mn').value.trim(),t=$('#mt').value.split(',').map(s=>s.trim()).filter(s=>/^([01]?\d|2[0-3]):[0-5]\d$/.test(s)).map(s=>s.padStart(5,'0')).sort();if(!n||!t.length)return toast('Informe nome e horários válidos (HH:MM)');
+const o={n,d:$('#md').value.trim()||'1 dose',t};if(id)Object.assign(S.meds.find(x=>x.id==id),o);else S.meds.push({id:uid(),on:1,i:'💊',...o});save();close();toast('Salvo');render()}
+function finMed(id){const m=S.meds.find(x=>x.id==id);S.meds=S.meds.filter(x=>x!=m);S.hist.push(m);save();close();render()}
+function delMed(id){S.meds=S.meds.filter(x=>x.id!=id);save();close();render()}
+function reativar(id){const m=S.hist.find(x=>x.id==id);S.hist=S.hist.filter(x=>x!=m);S.meds.push(m);save();render()}
+function tgl(id){const m=S.meds.find(x=>x.id==id);m.on^=1;save();toast(m.on?'Lembrete ativado':'Lembrete desativado');render()}
+function done(k){const h=ymd(new Date());S.log[h]=S.log[h]||{};S.log[h][k]?delete S.log[h][k]:S.log[h][k]=1;save();render()}
+function addLem(){modal(`<h2>Novo lembrete</h2><div class="form"><input id="ln" placeholder="O que lembrar?"><input id="ld" placeholder="Detalhe (opcional)"><input id="lt" type="time" value="09:00"></div><button class="btn" onclick="saveLem()">Salvar</button>`)}
+function saveLem(){const n=$('#ln').value.trim();if(!n)return toast('Informe o nome');S.custom.push({id:uid(),n,d:$('#ld').value.trim(),t:$('#lt').value||'09:00',i:'⏰'});save();close();render()}
+function addExame(){modal(`<h2>Novo laudo</h2><div class="form"><input id="en" placeholder="Nome do exame"><input id="ed" type="date" value="${ymd(new Date())}"><input id="ef" type="file" accept="image/*,.pdf"></div><button class="btn" onclick="saveEx()">Salvar</button>`)}
+function saveEx(){const n=$('#en').value.trim()||$('#ef').files[0]?.name;if(!n)return toast('Informe o nome ou anexe um arquivo');S.exams.unshift({id:uid(),n,date:$('#ed').value,r:'Arquivo anexado: '+($('#ef').files[0]?.name||'sem anexo')});save();close();toast('Laudo salvo');render()}
+function verLaudo(id){V.lau=id;nav('laudo','inicio')}
+function printLaudo(id){verLaudo(id);setTimeout(()=>{try{window.print()}catch(e){toast('Impressão indisponível')}},400)}
+function delLaudo(id){modal(`<h2>Excluir laudo?</h2><button class="btn" style="background:var(--red)" onclick="S.exams=S.exams.filter(x=>x.id!='${id}');save();close();nav('ex','inicio')">Sim, excluir</button><button class="btn o" onclick="close()">Manter</button>`)}
+function readN(id){const n=S.notifs.find(x=>x.id==id);n.r=1;save();render()}
+function chat(){const h=[['Equipe','Olá! Como podemos ajudar?']];const draw=()=>modal(`<h2>Suporte</h2>${h.map(m=>`<div class="card" style="${m[0]=='Você'?'background:var(--gl)':''}"><div class="t"><small>${m[0]}</small>${esc(m[1])}</div></div>`).join('')}<div class="form"><input id="cm" placeholder="Digite sua mensagem"></div><button class="btn" onclick="const v=$('#cm').value.trim();if(v){window._h.push(['Você',v],['Equipe','Recebemos sua mensagem. Um atendente responde em instantes.']);window._d()}">Enviar</button>`);window._h=h;window._d=draw;draw()}
+setInterval(()=>{const d=new Date(),hm=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'),day=ymd(d);window._al=window._al||{};
+S.meds.filter(m=>m.on&&m.t.includes(hm)).forEach(m=>{const k=day+m.id+hm;if(!window._al[k]){window._al[k]=1;notify(`Hora de tomar ${m.n} (${m.d})`);toast('⏰ Hora de tomar '+m.n);try{Notification.permission=='granted'&&new Notification('Farma & Vida',{body:'Hora de tomar '+m.n})}catch(e){}render()}});
+if(V.scr=='orders'&&!$('#ov'))render()},20000);
+const isApp=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+function icon(n){const c=document.createElement('canvas');c.width=c.height=n;const x=c.getContext('2d'),g=x.createLinearGradient(0,0,n,n);g.addColorStop(0,'#2e9e56');g.addColorStop(1,'#14602f');x.fillStyle=g;x.fillRect(0,0,n,n);x.fillStyle='#fff';const a=n*.14,b=n*.36,m=n/2;x.fillRect(m-a,m-b,2*a,2*b);x.fillRect(m-b,m-a,2*b,2*a);x.fillStyle='#9ccf6a';x.beginPath();x.ellipse(m+b*.7,m-b*.7,n*.1,n*.05,-Math.PI/4,0,7);x.fill();return c.toDataURL('image/png')}
+try{const i1=icon(192),i5=icon(512),l=document.createElement('link');l.rel='apple-touch-icon';l.href=i5;document.head.append(l);
+const man={name:'Farma & Vida',short_name:'Farma&Vida',description:'Saúde em todas as fases da vida',start_url:location.href.split('#')[0],scope:new URL('.',location.href).href,display:'standalone',display_override:['standalone'],orientation:'portrait',background_color:'#f3f8f2',theme_color:'#1c7a3e',lang:'pt-BR',icons:[{src:i1,sizes:'192x192',type:'image/png',purpose:'any'},{src:i5,sizes:'512x512',type:'image/png',purpose:'any'}]};
+const m=document.createElement('link');m.rel='manifest';m.href=URL.createObjectURL(new Blob([JSON.stringify(man)],{type:'application/manifest+json'}));document.head.append(m)}catch(e){}
+let DP=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();DP=e});window.addEventListener('appinstalled',()=>{DP=null;toast('Aplicativo instalado!');render()});
+async function installApp(){if(isApp())return toast('O aplicativo já está instalado');if(DP){DP.prompt();await DP.userChoice;DP=null;return}
+modal(`<h2>Instalar aplicativo</h2><p style="margin-bottom:8px"><b>Android (Chrome):</b> menu ⋮ → <i>Instalar app</i> ou <i>Adicionar à tela inicial</i>.</p><p style="margin-bottom:8px"><b>iPhone (Safari):</b> botão Compartilhar → <i>Adicionar à Tela de Início</i>.</p><p class="sub">Abra este link diretamente no navegador (não dentro de outro app ou de uma pré-visualização) para a instalação aparecer.</p><button class="btn" onclick="close()">Entendi</button>`)}
+function askClose(){modal(`<h2>Fechar o aplicativo?</h2><p style="margin-bottom:8px;color:var(--mut)">Seus dados ficam salvos neste aparelho.</p><button class="btn" style="background:var(--red)" onclick="closeApp()">Sim, fechar</button><button class="btn o" onclick="close()">Continuar no app</button>`)}
+function closeApp(){window._exit=1;close();try{window.close()}catch(e){}
+setTimeout(()=>{document.body.innerHTML='<div style="margin:auto;text-align:center;padding:24px"><div class="brand">Farma <span style="color:#7aa84a">&amp;</span> <i>Vida</i></div><p style="margin:12px 0;color:var(--mut)">Aplicativo fechado.<br>Você já pode sair com segurança.</p><button class="btn" onclick="location.reload()">Abrir novamente</button></div>'},250)}
+function appBack(){if(!S.setup)return;if($('#ov'))return close();const pr={cart:'pedidos',orders:'pedidos',pay:V.pay?.kind=='order'?'cart':V.pay?.kind=='lab'?'analises':'consultas',nota:V.rec?.k=='o'?'orders':V.rec?.k=='l'?'analises':'consultas',laudo:'ex'};
+if(V.scr=='inicio')return toast('Para sair, toque em ✕ Fechar');const t=pr[V.scr]||'inicio';nav(t,['cart','orders','pedidos'].includes(t)?'pedidos':['consultas'].includes(t)?'consultas':'inicio')}
+history.replaceState({fv:0},'');history.pushState({fv:1},'');window.addEventListener('popstate',()=>{history.pushState({fv:1},'');appBack()});
+window.addEventListener('beforeunload',e=>{if(isApp()&&!window._exit){e.preventDefault();e.returnValue=''}});
+theme();render();if(!S.setup)welcome();try{Notification.permission=='default'&&Notification.requestPermission()}catch(e){}
+</script></body></html>
